@@ -13,6 +13,6 @@
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.ant.ui.AntClasspathProvider"/>
     <stringAttribute key="org.eclipse.ui.externaltools.ATTR_ANT_TARGETS" value="BackAnnotation,"/>
     <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:/org.univaq.uml2lqn/launch.xml}"/>
-    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-Dinput=&quot;UMLModel&quot; -Doutput=&quot;result&quot; -Dname=&quot;automatedGuidedVehicle&quot; -DexecutableAbsPath=&quot;/home/xeder/Desktop/projects/swperf/V5/lqns/lqns&quot;"/>
+    <stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="-Dinput=&quot;UMLModel&quot; -Doutput=&quot;result&quot; -Dname=&quot;automatedGuidedVehicle&quot;"/>
     <stringAttribute key="process_factory_id" value="org.eclipse.ant.ui.remoteAntProcessFactory"/>
 </launchConfiguration>

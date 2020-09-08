@@ -8,7 +8,7 @@ pre
 
 post
 {
-	"Done!".println();	
+	"Done!!".println();	
 }
 
 rule Model2Schema 
@@ -39,16 +39,18 @@ rule Node2Processor
 
 			return node.checkStereotypeApplication("GaExecHost") and interacting.notEmpty();
 		}
+		
 		// Gets the object representing the "GaExecHost" stereotype
 		var stereotype = node.checkAndGetStereotype("GaExecHost");
 		var resTag = node.getValue(stereotype, "resMult");
+	
 		var tasks = node.getDeployed();	
 		var sources = tasks.collect(i | i.getSources()).flatten;
-		
+	
 		if(sources.notEmpty()) 
 			tasks.addAll(sources);
-				
-		proc.name = node.name;
+		
+		proc.name = node.name;		
 		proc.task ::= tasks;
 		proc.replication = resTag.asBigInteger();
 	}
@@ -59,7 +61,7 @@ rule Actor2Task
 	{
 		var lifelines = actor.getLifelines();
 		var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
-							
+		
 		task.name = actor.name;
 		task.scheduling = LQN!TaskSchedulingType#ref;			
 		task.entry ::= beses;
@@ -71,7 +73,7 @@ rule Component2Task
 	{		
 		var lifelines = component.getLifelines();	
 		var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
-
+		
 		task.name = component.name;
 		task.entry ::= beses;
 	}
@@ -81,6 +83,7 @@ rule BES2Entry
 	to entry: LQN!EntryType
 	{	
 		guard: bes.isAllowed()
+		
 				
 		var messages = bes.getMessages();
 		// Gets only the messages that are sent
@@ -89,7 +92,7 @@ rule BES2Entry
 		// If msgs is empty, then the BES is a sink 
 		if(messages.isEmpty())
 			messages.add(bes.start);
-					
+		
 		entry.name = bes.name;		
 		entry.entryPhaseActivities = new LQN!PhaseActivities;
 		entry.entryPhaseActivities.activity ::= messages;

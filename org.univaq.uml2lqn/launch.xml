@@ -23,12 +23,11 @@
 		</epsilon.eol>
 		
 		<epsilon.storeModel model="PlainLQN"/>	
-		<!-- <eclipse.refreshLocal resource="${output}/output.xml" depth="infinite"/> -->
-		
+		<!-- <eclipse.refreshLocal resource="${output}/output.xml" depth="infinite"/> -->	
 	</target>
 	
 	<target name="Solver" depends="ChangeRoot">
-		<exec executable="${executableAbsPath}">
+		<exec executable="lqns">
 			<arg value="${output}/${name}.xml"/>
 		</exec>
 	</target>
@@ -36,11 +35,9 @@
 	<target name="BackAnnotation" depends="Solver">
 		<epsilon.xml.loadModel name="LQXO" file="${output}/${name}.lqxo" 
 			read="true" store="false"/>
-		
 		<epsilon.eol src="backAnnotation.eol">
 			<model ref="LQXO"/>
 			<model ref="UML"/>
 		</epsilon.eol>
-	</target>
-	
+	</target>	
 </project>

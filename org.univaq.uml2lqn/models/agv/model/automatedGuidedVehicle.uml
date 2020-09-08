@@ -160,7 +160,7 @@ Comment:.
           <fragment xmi:type="uml:ExecutionOccurrenceSpecification" xmi:id="_19_0_3_6590219_1593768263586_5818_5571Finish" covered="_19_0_3_6590219_1593768127198_953101_5543" execution="_19_0_3_6590219_1593768263586_5818_5571Start"/>
           <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_19_0_3_6590219_1593768574071_175691_5606" name="controller0_bes" visibility="public" covered="_19_0_3_6590219_1593768088852_226089_5487" finish="_19_0_3_6590219_1593769306286_115354_5673" start="_19_0_3_6590219_1593768263588_627368_5572"/>
           <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_19_0_3_6590219_1593768793953_822681_5618" name="motor0_bes" visibility="public" covered="_19_0_3_6590219_1593768560351_164578_5590" finish="_19_0_3_6590219_1593768917493_381507_5622" start="_19_0_3_6590219_1593768793942_640432_5612"/>
-          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_19_0_3_6590219_1593769337120_178111_5683" name="ss_behavior" visibility="public" covered="_19_0_3_6590219_1593768127198_953101_5543" finish="_19_0_3_6590219_1593962224308_20839_5273" start="_19_0_3_6590219_1593962224307_514922_5272"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_19_0_3_6590219_1593769337120_178111_5683" name="ss_behavior" visibility="public" covered="_19_0_3_6590219_1593768127198_953101_5543" finish="_19_0_3_6590219_1593954368339_493910_5238" start="_19_0_3_6590219_1593768263586_5818_5571"/>
           <fragment xmi:type="uml:ExecutionOccurrenceSpecification" xmi:id="_19_0_3_6590219_1593769337121_95475_5684" name="" visibility="public" covered="_19_0_3_6590219_1593768127198_953101_5543" execution="_19_0_3_6590219_1593769337120_178111_5683"/>
           <fragment xmi:type="uml:ExecutionOccurrenceSpecification" xmi:id="_19_0_3_6590219_1593769337122_160098_5685" name="" visibility="public" covered="_19_0_3_6590219_1593768127198_953101_5543" execution="_19_0_3_6590219_1593769337120_178111_5683"/>
           <fragment xmi:type="uml:ExecutionOccurrenceSpecification" xmi:id="_19_0_3_6590219_1593855389394_666126_5183" name="" visibility="public" covered="_19_0_3_6590219_1593768127198_953101_5543" execution="_19_0_3_6590219_1593769337120_178111_5683"/>
@@ -284,6 +284,7 @@ Comment:.
       </packagedElement>
       <packagedElement xmi:type="uml:Node" xmi:id="_19_0_3_6590219_1593759202244_229134_5001" name="DisplaySystem" visibility="public">
         <ownedAttribute xmi:id="_19_0_3_6590219_1593763540701_817950_5158" name="1" visibility="private" type="_19_0_3_6590219_1593759166026_70965_4945" association="_19_0_3_6590219_1593763540700_480838_5156"/>
+        <deployment xmi:id="_Q7z_sPENEeqJLabriqt6Yw" name="display_system" client="_19_0_3_6590219_1593759202244_229134_5001" supplier="_bAE58PENEeqJLabriqt6Yw" deployedArtifact="_bAE58PENEeqJLabriqt6Yw"/>
       </packagedElement>
       <packagedElement xmi:type="uml:Artifact" xmi:id="_19_0_3_6590219_1593763401815_947039_5106" name="vehicle-control" visibility="public" fileName="">
         <manifestation xmi:id="_19_0_3_6590219_1593763485186_486258_5149" name="" visibility="public" client="_19_0_3_6590219_1593763401815_947039_5106" supplier="_19_0_3_6590219_1593708704667_750301_5472" utilizedElement="_19_0_3_6590219_1593708704667_750301_5472"/>
@@ -301,6 +302,9 @@ Comment:.
       </packagedElement>
       <packagedElement xmi:type="uml:Artifact" xmi:id="_19_0_3_6590219_1593765956962_681513_5385" name="motor" visibility="public" fileName="">
         <manifestation xmi:id="_19_0_3_6590219_1593766143781_166228_5409" name="" visibility="public" client="_19_0_3_6590219_1593765956962_681513_5385" supplier="_19_0_3_6590219_1593763232480_76635_5068" utilizedElement="_19_0_3_6590219_1593763232480_76635_5068"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Artifact" xmi:id="_bAE58PENEeqJLabriqt6Yw" name="display-system">
+        <manifestation xmi:id="_f_VCMPENEeqJLabriqt6Yw" supplier="_19_0_3_6590219_1593767147711_992976_5442" utilizedElement="_19_0_3_6590219_1593767147711_992976_5442"/>
       </packagedElement>
     </packagedElement>
     <packagedElement xmi:type="uml:Package" xmi:id="_uBlQkA73EdyML4mHwjNDrw" name="MARTE_Library" visibility="public" URI="">
@@ -2545,6 +2549,7 @@ Comment:.
   <GQAM:GaStep xmi:id="_i2hDAMA_Eeq4s5ZiqWeHpA" base_NamedElement="_19_0_3_6590219_1593953097100_552133_5165" base_Message="_19_0_3_6590219_1593953097100_552133_5165">
     <execTime>2</execTime>
   </GQAM:GaStep>
+   <GQAM:GaExecHost xmi:id="_i1hDAcA_Eeq4s5ZiqWeHpA" base_Classifier="_19_0_3_6590219_1593759202244_229134_5001"/>
   <GQAM:GaExecHost xmi:id="_i2hDAcA_Eeq4s5ZiqWeHpA" base_Classifier="_19_0_3_6590219_1593764084415_824881_5251"/>
   <GQAM:GaExecHost xmi:id="_i2hqEMA_Eeq4s5ZiqWeHpA" base_Classifier="_19_0_3_6590219_1593764100236_100100_5279"/>
   <GQAM:GaExecHost xmi:id="_i2hqEcA_Eeq4s5ZiqWeHpA" base_Classifier="_19_0_3_6590219_1593764069669_434487_5223"/>

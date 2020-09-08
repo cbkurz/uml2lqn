@@ -2,13 +2,27 @@
 <lqn-model name="Model">
   <processor name="AutomatedGuidedVehicle" replication="1">
         
+    <task name="vehicle-status">
+            
+      <entry name="status_ bes">
+                
+        <entry-phase-activities>
+                    
+          <activity host-demand-mean="2.0" name="status_message" phase="1"/>
+                  
+        </entry-phase-activities>
+              
+      </entry>
+          
+    </task>
+        
     <task name="vehicle-control">
             
       <entry name="controller0_bes">
                 
         <entry-phase-activities>
                     
-          <activity host-demand-mean="10.0" name="start_motor_message" phase="1">
+          <activity host-demand-mean="1.0" name="start_motor_message" phase="1">
                         
             <synch-call calls-mean="1.0" dest="motor0_bes"/>
                       
@@ -42,31 +56,17 @@
                 
         <entry-phase-activities>
                     
-          <activity host-demand-mean="5.0" name="status_message" phase="1">
+          <activity host-demand-mean="2.0" name="status_message" phase="1">
                         
-            <synch-call calls-mean="1.0" dest="status_bes"/>
+            <synch-call calls-mean="1.0" dest="status_ bes"/>
                       
           </activity>
                     
-          <activity host-demand-mean="4.0" name="display_message" phase="1">
+          <activity host-demand-mean="5.0" name="display_message" phase="1">
                         
             <synch-call calls-mean="1.0" dest="ds_bes"/>
                       
           </activity>
-                  
-        </entry-phase-activities>
-              
-      </entry>
-          
-    </task>
-        
-    <task name="vehicle-status">
-            
-      <entry name="status_bes">
-                
-        <entry-phase-activities>
-                    
-          <activity host-demand-mean="5.0" name="status_message" phase="1"/>
                   
         </entry-phase-activities>
               
@@ -80,7 +80,7 @@
                 
         <entry-phase-activities>
                     
-          <activity host-demand-mean="12.0" name="move_message" phase="1">
+          <activity host-demand-mean="15.0" name="move_message" phase="1">
                         
             <synch-call calls-mean="1.0" dest="controller0_bes"/>
                       
@@ -98,7 +98,7 @@
                 
         <entry-phase-activities>
                     
-          <activity host-demand-mean="11.0" name="arrived_message" phase="1">
+          <activity host-demand-mean="4.0" name="arrived_message" phase="1">
                         
             <synch-call calls-mean="1.0" dest="controller1_bes"/>
                       
@@ -116,7 +116,7 @@
                 
         <entry-phase-activities>
                     
-          <activity host-demand-mean="2.0" name="expired_message" phase="1">
+          <activity host-demand-mean="11.0" name="expired_message" phase="1">
                         
             <synch-call calls-mean="1.0" dest="controller2_bes"/>
                       
@@ -133,21 +133,21 @@
         
     <task name="motor">
             
-      <entry name="motor0_bes">
-                
-        <entry-phase-activities>
-                    
-          <activity host-demand-mean="10.0" name="start_motor_message" phase="1"/>
-                  
-        </entry-phase-activities>
-              
-      </entry>
-            
       <entry name="motor1_bes">
                 
         <entry-phase-activities>
                     
           <activity host-demand-mean="2.0" name="stop_motor" phase="1"/>
+                  
+        </entry-phase-activities>
+              
+      </entry>
+            
+      <entry name="motor0_bes">
+                
+        <entry-phase-activities>
+                    
+          <activity host-demand-mean="1.0" name="start_motor_message" phase="1"/>
                   
         </entry-phase-activities>
               
@@ -181,7 +181,7 @@
                 
         <entry-phase-activities>
                     
-          <activity host-demand-mean="4.0" name="display_message" phase="1"/>
+          <activity host-demand-mean="5.0" name="display_message" phase="1"/>
                   
         </entry-phase-activities>
               

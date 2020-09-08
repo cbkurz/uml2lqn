@@ -1,15 +1,22 @@
 // LQN Processors --> UML Nodes
 var xml_processors = `t_processor`.all;
-var proc_results = xml_processors.forAll(p | annotate_nodes(p));
+
+for(element in xml_processors)
+	annotate_nodes(element);
 
 // LQN Entry --> UML BES
 var entries = `t_entry`.all;
-var entries_results = entries.forAll(t | annotate_entries(t));
+// entries.forAll(t | annotate_entries(t));
+
+for(element in entries)
+	annotate_entries(element);
 
 // LQN Activity --> UML Message
 var activities = `t_activity`.all;
 activities.a_name.println();
-var entries_results = activities.forAll(t | annotate_activity(t));
+
+for(element in activities)
+	annotate_activity(element);
 
 // Adds utilization to nodes
 operation annotate_nodes(proc)

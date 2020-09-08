@@ -94,15 +94,19 @@ operation UML!Lifeline getElements(type: String): OrderedSet
  */
 operation UML!Component getSources(): Collection
 {
+
 	var lifelines = self.getLifelines();
 	
 	// Gets the BehaviorExecutionSpecification for each lifeline involving 'self'
 	var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
+	
 	beses = beses.select(i | i.isAllowed());	
 	
 	// Retrieves the lifelines that sending a message to 'self'
 	var sources = beses.collect(i | i.start.message.sendEvent.covered).flatten;
+	
 	sources = sources.represents.collect(i | i.getType());
+	
 	// Selects those lifelines representing an Actor
 	return sources.select(i | i.isTypeOf(Actor));	
 }
