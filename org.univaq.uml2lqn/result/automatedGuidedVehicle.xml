@@ -2,7 +2,7 @@
 <lqn-model name="Model">
   <processor name="AutomatedGuidedVehicle" replication="1">
         
-    <task name="vehicle-status">
+    <task multiplicity="1" name="vehicle-status">
             
       <entry name="status_ bes">
                 
@@ -16,7 +16,7 @@
           
     </task>
         
-    <task name="vehicle-control">
+    <task multiplicity="2" name="vehicle-control">
             
       <entry name="controller0_bes">
                 
@@ -74,7 +74,7 @@
           
     </task>
         
-    <task name="SupervisorySystem" scheduling="ref">
+    <task multiplicity="1" name="SupervisorySystem" scheduling="ref">
             
       <entry name="ss_behavior">
                 
@@ -92,7 +92,7 @@
           
     </task>
         
-    <task name="ArrivalSensor" scheduling="ref">
+    <task multiplicity="1" name="ArrivalSensor" scheduling="ref">
             
       <entry name="agv_as_arrival">
                 
@@ -110,7 +110,7 @@
           
     </task>
         
-    <task name="Clock" scheduling="ref">
+    <task multiplicity="1" name="Clock" scheduling="ref">
             
       <entry name="clk_bes">
                 
@@ -131,7 +131,7 @@
   </processor>
   <processor name="Motor" replication="1">
         
-    <task name="motor">
+    <task multiplicity="1" name="motor">
             
       <entry name="motor1_bes">
                 
@@ -158,7 +158,7 @@
   </processor>
   <processor name="RobotArm" replication="1">
         
-    <task name="robot-arm">
+    <task multiplicity="1" name="robot-arm">
             
       <entry name="arm_bes">
                 
@@ -175,7 +175,7 @@
   </processor>
   <processor name="DisplaySystem" replication="1">
         
-    <task name="display-system">
+    <task multiplicity="1" name="display-system">
             
       <entry name="ds_bes">
                 

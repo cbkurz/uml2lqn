@@ -43,13 +43,13 @@ rule Node2Processor
 		// Gets the object representing the "GaExecHost" stereotype
 		var stereotype = node.checkAndGetStereotype("GaExecHost");
 		var resTag = node.getValue(stereotype, "resMult");
-	
+			
 		var tasks = node.getDeployed();	
 		var sources = tasks.collect(i | i.getSources()).flatten;
 	
 		if(sources.notEmpty()) 
 			tasks.addAll(sources);
-		
+					
 		proc.name = node.name;		
 		proc.task ::= tasks;
 		proc.replication = resTag.asBigInteger();
@@ -63,7 +63,8 @@ rule Actor2Task
 		var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
 		
 		task.name = actor.name;
-		task.scheduling = LQN!TaskSchedulingType#ref;			
+		task.scheduling = LQN!TaskSchedulingType#ref;
+		task.multiplicity = "1".asBigInteger();	
 		task.entry ::= beses;
 	}
 
@@ -74,7 +75,12 @@ rule Component2Task
 		var lifelines = component.getLifelines();	
 		var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
 		
+		// Artifacts representing the component
+		var artifacts = component.getArtifacts();
+		var multiplicity = artifacts.size();
+		
 		task.name = component.name;
+		task.multiplicity = multiplicity.toString();
 		task.entry ::= beses;
 	}
 
@@ -111,7 +117,7 @@ rule Message2Activity
 		// Get Stereotype Tags value
 		var stereotype = message.checkAndGetStereotype("GaStep");
 		var execTime = message.getValue(stereotype, "execTime").first;
-		var rep = message.getValue(stereotype, "rep");				
+		var rep = message.getValue(stereotype, "rep");						
 		var hostDemandMean = execTime.asDouble() * rep.asDouble(); 
 					
 		actv.name = message.name;

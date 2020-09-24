@@ -39,15 +39,31 @@ operation UML!Node getDeployed(): Collection
 	// If the deployment dependency does not exists, then the deployed element is 
 	if(self.deployment.isEmpty())
 		return new Sequence();
-		
+				
 	// This variable represents the 'deployment' association between a Node and an Artifact
 	var deployment = self.deployment;
 	// It is the object of the artifact deployed on self (Node)
 	var artifacts = deployment.collect(i | i.getSuppliers()).flatten;
 	var manifestation = artifacts.manifestation.flatten;
-	
+		
 	return manifestation.collect(i | i.getSuppliers()).flatten;	
 }
+
+/**
+ * Retrieves the artifacts representing a given component
+ * @return a collection comprising the set of artifacts
+ */
+operation UML!Component getArtifacts(): Collection
+{
+	var artifacts = UML!Artifact.all();
+	var manifestations = artifacts.manifestation.flatten;
+	
+	manifestations = manifestations.supplier.flatten;
+	
+	return artifacts.collect(i | i.manifestation.flatten)
+					.select(i | i.supplier.flatten.includes(self));
+}
+
 
 /**
  * Checks if it exists a behavioral description involving the input element
