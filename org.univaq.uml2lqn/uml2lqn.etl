@@ -15,7 +15,9 @@ post
 rule Model2Schema 
 	transform uml: UML!Model
 	to lqn: LQN!LqnModelType
-	{	
+	{
+		guard: uml.name <> "PrimitiveTypes"
+		
 		lqn.name = uml.name;
 		lqn.processor ::= UML!Node.all();
 	}
@@ -46,9 +48,9 @@ rule Node2Processor
 		var resTag = node.getValue(stereotype, "resMult");
 			
 		var tasks = node.getDeployed();
-		tasks.println();
+		//tasks.println();
 		var sources = tasks.collect(i | i.getSources()).flatten;
-		sources.println();
+		//sources.println();
 	
 		if(sources.notEmpty()) 
 			tasks.addAll(sources);
@@ -64,7 +66,7 @@ rule Actor2Task
 	{
 		var lifelines = actor.getLifelines();
 		var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
-		beses.println();
+		//beses.println();
 		
 		task.name = actor.name;
 		task.scheduling = LQN!TaskSchedulingType#ref;
@@ -83,8 +85,8 @@ rule Component2Task
 		var artifacts = component.getArtifacts();
 		var multiplicity = artifacts.size();
 		
-		component.println("component: ");
-		beses.println("beses: ");
+		//component.println("component: ");
+		//beses.println("beses: ");
 		
 		task.name = component.name;
 		task.multiplicity = multiplicity.toString();
@@ -97,12 +99,12 @@ rule BES2Entry
 	{	
 		guard: bes.isAllowed()
 		
-		bes.name.println("bes ");
+		//bes.name.println("bes ");
 		var messages = bes.getMessages();
 		// Gets only the messages that are sent
 		messages = messages.select(i | i.isSend() and i.message.messageSort <> UML!MessageSort#reply);	
 		
-		messages.println();
+		//messages.println();
 
 		// If msgs is empty, then the BES is a sink 
 		if(messages.isEmpty())
