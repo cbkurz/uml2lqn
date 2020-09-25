@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.epsilon.eol.eclipse.dt.launching.EolLaunchConfigurationDelegate">
     <booleanAttribute key="fine_grained_profiling" value="false"/>
+    <stringAttribute key="implementation_name" value="Parallel"/>
     <listAttribute key="models">
-        <listEntry value="storeOnDisposal=false&#10;aliases=&#10;file=/org.univaq.uml2lqn/result/output.lqxo&#10;cached=true&#10;name=LQN&#10;type=PlainXML&#10;readOnLoad=true&#10;uri=&#10;fileBased=true"/>
-        <listEntry value="storeOnDisposal=false&#10;expand=true&#10;aliases=&#10;modelFile=/org.univaq.uml2lqn/umlModel/sample.uml&#10;cached=true&#10;name=UML&#10;type=UML&#10;readOnLoad=true"/>
+        <listEntry value="storeOnDisposal=true&#10;aliases=&#10;file=/org.univaq.uml2lqn/result/automatedGuidedVehicle.lqxo&#10;cached=true&#10;name=LQN&#10;concurrent=false&#10;type=PlainXML&#10;readOnLoad=true&#10;uri=&#10;fileBased=true"/>
+        <listEntry value="storeOnDisposal=false&#10;expand=true&#10;aliases=&#10;modelFile=/org.univaq.uml2lqn/UMLModel/automatedGuidedVehicle.uml&#10;cached=true&#10;name=UML&#10;concurrent=false&#10;type=UML&#10;readOnLoad=true"/>
     </listAttribute>
+    <intAttribute key="parallelism" value="7"/>
     <listAttribute key="parameters"/>
     <booleanAttribute key="profile_model_loading" value="false"/>
     <booleanAttribute key="profiling_enabled" value="false"/>

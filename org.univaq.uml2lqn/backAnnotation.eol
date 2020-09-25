@@ -1,22 +1,41 @@
+import "operations.eol";
+
+// Annotating Scenarios
+var scenarios = UML!UseCase.all.select(i | i.checkStereotypeApplication("GaScenario"));
+for(scenario in scenarios)
+	scenario.annotate_scenario();
+
 // LQN Processors --> UML Nodes
 var xml_processors = `t_processor`.all;
-
 for(element in xml_processors)
 	annotate_nodes(element);
 
 // LQN Entry --> UML BES
 var entries = `t_entry`.all;
-// entries.forAll(t | annotate_entries(t));
-
 for(element in entries)
 	annotate_entries(element);
 
 // LQN Activity --> UML Message
 var activities = `t_activity`.all;
-activities.a_name.println();
-
 for(element in activities)
 	annotate_activity(element);
+
+operation UML!UseCase annotate_scenario()
+{
+	var stereotype = self.getAppliedStereotypes().selectOne(i | i.name = "GaScenario");
+	// Sets Response Time
+	var resptime = get_scenario_resptime(self);
+	self.setValue(stereotype, "respT", Sequence{resptime.asString()});
+	
+	// Sets Throughput
+	var root = self.getValue(stereotype, "root");
+	var throughput = root.rep.asDouble / resptime; 
+	self.setValue(stereotype, "throughput", Sequence{throughput.asString()});
+	
+	
+	UML.store().println("Scenario: " + self.name + " ResponseTime: " +
+		resptime + " Throughput: " + throughput +  " Stored: ");
+}
 
 // Adds utilization to nodes
 operation annotate_nodes(proc)
@@ -28,39 +47,17 @@ operation annotate_nodes(proc)
 	
 	var utilization = proc.children.flatten
 		.select(i | i.name = "result-processor").a_utilization;	
-	
+			
 	node_object.setValue(stereotype, "utilization", utilization);
 	
 	UML.store().println("Processor: " + proc.a_name + " Utilization: " +
 		utilization.first + " Stored: ");
 }
 
-// Adds throughput and utilization to BES instances
-operation annotate_entries(entry)
-{
-	var bes_object = UML!BehaviorExecutionSpecification.all
-		.selectOne(i | i.name = entry.a_name);
-			
-	var stereotype = bes_object.getAppliedStereotypes()
-		.selectOne(i | i.name == "GaScenario");
-	
-	var results = entry.children.flatten
-		.select(i | i.name = "result-entry");	
-	
-	var utilization = results.a_utilization;
-	var throughput = results.a_throughput;
-	
-	bes_object.setValue(stereotype, "utilization", utilization);
-	bes_object.setValue(stereotype, "throughput", throughput);
-	
-	UML.store().println("Entry: " + entry.a_name + " Utilization: " +
-		utilization.first + " Throughput: " + throughput.first + 
-			" Stored: ");
-}
-
 // Adds service time to messages
 operation annotate_activity(activity)
 {
+
 	var activity_object = UML!Message.all
 		.selectOne(i | i.name = activity.a_name);	
 				
@@ -76,3 +73,56 @@ operation annotate_activity(activity)
 	UML.store().println("Activity: " + activity.a_name + " ServiceTime: " +
 		service_time.first + " Stored: ");
 }
+
+operation get_scenario_resptime(scenario : UML!UseCase)
+{
+	// Gets the names of the actors triggering the events in the sequences
+	var lifelines = scenario.classifierBehavior.lifelines.select(i | i.checkStereotypeApplication("GaWorkloadEvent"));
+	var types = lifelines.represents.collect(i | i.getType().name);
+	
+	// Get all the reference task;
+	var reference_tasks = `t_task`.all.select(i | i.`a_scheduling` == "ref" and types.includes(i.`a_name`));
+	
+	var entries = reference_tasks.getChildren("entry");
+	var entryPhases = entries.getChildren("entry-phase-activities");
+	var activities = entryPhases.getChildren("activity");
+	
+	var times = activities.getChildren("result-activity").`a_service-time`;
+	times = times.collect(i | i.asDouble());
+	
+	return times.sum();
+
+}
+
+operation Collection getChildren(name : String)
+{
+	return self.children.flatten.select(i | i.tagName = name);
+}
+
+/*
+// Adds throughput and utilization to BES instances
+operation annotate_entries(entry)
+{
+	
+	var bes_object = UML!BehaviorExecutionSpecification.all
+		.selectOne(i | i.name = entry.a_name);	
+		
+	var stereotype = bes_object.getAppliedStereotypes()
+		.selectOne(i | i.name == "GaScenario");
+	
+	
+	var results = entry.children.flatten
+		.select(i | i.name = "result-entry");	
+	
+	var utilization = results.a_utilization;
+	var throughput = results.a_throughput;
+	
+	//bes_object.setValue(stereotype, "utilization", utilization);
+	// bes_object.setValue(stereotype, "throughput", throughput);
+	
+	UML.store().println("Entry: " + entry.a_name + " Utilization: " +
+		utilization.first + " Throughput: " + throughput.first + 
+			" Stored: ");
+
+}
+*/

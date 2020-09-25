@@ -11,10 +11,11 @@ post
 	"Done!!".println();	
 }
 
+
 rule Model2Schema 
 	transform uml: UML!Model
 	to lqn: LQN!LqnModelType
-	{
+	{	
 		lqn.name = uml.name;
 		lqn.processor ::= UML!Node.all();
 	}
@@ -39,13 +40,15 @@ rule Node2Processor
 
 			return node.checkStereotypeApplication("GaExecHost") and interacting.notEmpty();
 		}
-		
+			
 		// Gets the object representing the "GaExecHost" stereotype
 		var stereotype = node.checkAndGetStereotype("GaExecHost");
 		var resTag = node.getValue(stereotype, "resMult");
 			
-		var tasks = node.getDeployed();	
+		var tasks = node.getDeployed();
+		tasks.println();
 		var sources = tasks.collect(i | i.getSources()).flatten;
+		sources.println();
 	
 		if(sources.notEmpty()) 
 			tasks.addAll(sources);
@@ -61,6 +64,7 @@ rule Actor2Task
 	{
 		var lifelines = actor.getLifelines();
 		var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
+		beses.println();
 		
 		task.name = actor.name;
 		task.scheduling = LQN!TaskSchedulingType#ref;
@@ -79,6 +83,9 @@ rule Component2Task
 		var artifacts = component.getArtifacts();
 		var multiplicity = artifacts.size();
 		
+		component.println("component: ");
+		beses.println("beses: ");
+		
 		task.name = component.name;
 		task.multiplicity = multiplicity.toString();
 		task.entry ::= beses;
@@ -90,16 +97,18 @@ rule BES2Entry
 	{	
 		guard: bes.isAllowed()
 		
-				
+		bes.name.println("bes ");
 		var messages = bes.getMessages();
 		// Gets only the messages that are sent
 		messages = messages.select(i | i.isSend() and i.message.messageSort <> UML!MessageSort#reply);	
+		
+		messages.println();
 
 		// If msgs is empty, then the BES is a sink 
 		if(messages.isEmpty())
 			messages.add(bes.start);
-		
-		entry.name = bes.name;		
+	
+		entry.name = bes.name;					
 		entry.entryPhaseActivities = new LQN!PhaseActivities;
 		entry.entryPhaseActivities.activity ::= messages;
 	} 
@@ -123,7 +132,6 @@ rule Message2Activity
 		actv.name = message.name;
 		actv.phase = "1".asBigInteger();
 		actv.hostDemandMean = hostDemandMean;
-
 		/**
 	 	 * Builds the synchCall object, getting the target Lifeline
 		 */	

@@ -45,7 +45,6 @@ operation UML!Node getDeployed(): Collection
 	// It is the object of the artifact deployed on self (Node)
 	var artifacts = deployment.collect(i | i.getSuppliers()).flatten;
 	var manifestation = artifacts.manifestation.flatten;
-		
 	return manifestation.collect(i | i.getSuppliers()).flatten;	
 }
 
