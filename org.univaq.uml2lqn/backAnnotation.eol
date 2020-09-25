@@ -10,10 +10,11 @@ var xml_processors = LQXO!`t_processor`.all;
 for(element in xml_processors)
 	annotate_nodes(element);
 
+// NO LONGER USED
 // LQN Entry --> UML BES
-var entries = LQXO!`t_entry`.all;
+/*var entries = LQXO!`t_entry`.all;
 for(element in entries)
-	annotate_entries(element);
+	annotate_entries(element);*/
 
 // LQN Activity --> UML Message
 var activities = LQXO!`t_activity`.all;
