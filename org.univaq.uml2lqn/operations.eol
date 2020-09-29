@@ -44,6 +44,7 @@ operation UML!Node getDeployed(): Collection
 	var deployment = self.deployment;
 	// It is the object of the artifact deployed on self (Node)
 	var artifacts = deployment.collect(i | i.getSuppliers()).flatten;
+	
 	var manifestation = artifacts.manifestation.flatten;
 	return manifestation.collect(i | i.getSuppliers()).flatten;	
 }
@@ -55,12 +56,8 @@ operation UML!Node getDeployed(): Collection
 operation UML!Component getArtifacts(): Collection
 {
 	var artifacts = UML!Artifact.all();
-	var manifestations = artifacts.manifestation.flatten;
-	
-	manifestations = manifestations.supplier.flatten;
-	
-	return artifacts.collect(i | i.manifestation.flatten)
-					.select(i | i.supplier.flatten.includes(self));
+	var manifestations = artifacts.manifestation.flatten.select(i | i.supplier.includes(self));
+	return manifestations.collect(i | i.client).flatten;	
 }
 
 
@@ -158,3 +155,107 @@ operation UML!BehaviorExecutionSpecification getMessages(): Collection
 	return modelMessages.select(i | elements.indexOf(i) >= start 
 		and elements.indexOf(i) <= end);
 }
+
+
+/***************************************************************/
+operation UML!Node getSpeedFactor()
+{
+	var stereotype = self.checkAndGetStereotype("GaExecHost");
+	return self.getValue(stereotype, "speedFactor");
+}
+
+operation UML!Node getArtifacts()
+{
+	return self.deployment.flatten.deployedArtifact.flatten;
+}
+
+// Checks if self is a clone
+operation UML!Node isClone(node : UML!Node) : Boolean 
+{
+	if(self.id = node.id)
+		return false;
+	
+	var selfArtifacts = self.getArtifacts();
+	var nodeArtifacts = node.getArtifacts();
+		
+	if(self.getSpeedFactor() = node.getSpeedFactor() 
+		and nodeArtifacts.includesAll(selfArtifacts))
+		return true; 
+		
+	return false;
+}
+
+operation UML!Node getOrigins() : Sequence
+{
+	var stereotypedNodes = UML!Node.all.select(i | i.checkStereotypeApplication("GaExecHost"));
+	return stereotypedNodes.select(i | self.isClone(i));	
+}
+
+operation UML!Node getCopies() : Sequence
+{
+	var stereotypedNodes = UML!Node.all.select(i | i.checkStereotypeApplication("GaExecHost") and i.getArtifacts().notEmpty());
+	return stereotypedNodes.select(i | i.isClone(self));	
+}
+
+/* 
+ * Operations to implement the replication of tasks; 
+operation LQN!TaskType getActivities() : Sequence
+{
+	return self.entry.entryPhaseActivities.activity.flatten;
+}
+
+operation LQN!TaskType setFanOut()
+{
+	var taskEntries = self.entry;
+	var entriesNames = taskEntries.name;
+		
+	for(task in LQN!TaskType.all())
+	{
+		var taskActivities = task.getActivities();
+		var taskCalls = taskActivities.synchCall.flatten;
+		var taskDests = taskCalls.dest;
+
+		var fanOut = new Sequence();
+
+		for(dest in taskDests)
+		{
+			if(entriesNames.includes(dest))
+			{
+				var fanObject = new LQN!FanOutType;
+				fanObject.dest = self.name;
+				fanObject.value = self.replication;
+				fanOut.add(fanObject);
+			}
+		}
+		
+		task.fanOut = fanOut;
+	}
+	
+}
+
+operation LQN!TaskType setFanIn()
+{
+	var taskActivities = self.getActivities();
+	var taskCalls = taskActivities.synchCall.flatten;
+	var taskDests = taskCalls.dest;
+
+	for(task in LQN!TaskType.all())
+	{
+		var entries = task.entry.name;
+		var fanIn = new Sequence();
+		
+		for(entry in entries)
+		{
+			if(taskDests.includes(entry))
+			{
+				var fanObject = new LQN!FanInType;
+				fanObject.source = self.name;
+				fanObject.value = self.replication;
+				fanIn.add(fanObject);
+			}
+		}
+		
+		task.fanIn = fanIn;
+	}
+}
+*/

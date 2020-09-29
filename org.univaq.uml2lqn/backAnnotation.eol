@@ -10,12 +10,6 @@ var xml_processors = LQXO!`t_processor`.all;
 for(element in xml_processors)
 	annotate_nodes(element);
 
-// NO LONGER USED
-// LQN Entry --> UML BES
-/*var entries = LQXO!`t_entry`.all;
-for(element in entries)
-	annotate_entries(element);*/
-
 // LQN Activity --> UML Message
 var activities = LQXO!`t_activity`.all;
 for(element in activities)
@@ -33,7 +27,6 @@ operation UML!UseCase annotate_scenario()
 	var throughput = root.rep.asDouble / resptime; 
 	self.setValue(stereotype, "throughput", Sequence{throughput.asString()});
 	
-	
 	UML.store().println("Scenario: " + self.name + " ResponseTime: " +
 		resptime + " Throughput: " + throughput +  " Stored: ");
 }
@@ -41,13 +34,14 @@ operation UML!UseCase annotate_scenario()
 // Adds utilization to nodes
 operation annotate_nodes(proc)
 {	
-	var node_object = UML!Node.all.selectOne(i | i.name = proc.a_name);	
+	proc.a_name.println();
 	
 	if(node_object.isUndefined()){
 		proc.a_name.println("[ERROR] Any node has name --> ");
 		throw "[ERROR] Any node has name --> " + proc.a_name;
 	}
 	
+	var node_object = UML!Node.all.selectOne(i | i.name = proc.a_name);
 	var stereotype = node_object.getAppliedStereotypes()
 		.selectOne(i | i.name == "GaExecHost");
 	
@@ -55,6 +49,12 @@ operation annotate_nodes(proc)
 		.select(i | i.name = "result-processor").a_utilization;	
 			
 	node_object.setValue(stereotype, "utilization", utilization);
+	var copies = node_object.getCopies();
+
+	for(copy in copies)
+	{	
+		copy.setValue(stereotype, "utilization", utilization);
+	}
 	
 	UML.store().println("Processor: " + proc.a_name + " Utilization: " +
 		utilization.first + " Stored: ");

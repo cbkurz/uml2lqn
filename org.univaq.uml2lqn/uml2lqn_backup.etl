@@ -7,21 +7,27 @@ pre
 }
 
 post
-{	
+{
+	/*
+	var tasks = LQN!TaskType.all().select(i | i.replication > 1);
+	for(task in tasks)
+	{
+		task.name.println();
+		task.setFanIn();
+		task.setFanOut();
+	}
+	*/
+	
 	"Done!!".println();	
 }
-
 
 rule Model2Schema 
 	transform uml: UML!Model
 	to lqn: LQN!LqnModelType
-	{
-		guard: uml.name <> "PrimitiveTypes"
-		
+	{	
 		lqn.name = uml.name;
 		lqn.processor ::= UML!Node.all();
 	}
-	
 
 // @Assumption: A Node deploys a single Artifact that has only one Manifestation;
 rule Node2Processor
@@ -40,27 +46,20 @@ rule Node2Processor
 
 			if(deployed.notEmpty())
 				interacting = deployed.select(i | i.isInteracting());
-			
-			// The transformation considers nodes that are GaExecHost, interacting and are not duplicate
-			return node.checkStereotypeApplication("GaExecHost") and interacting.notEmpty() and node.getOrigins().isEmpty();
+
+			return node.checkStereotypeApplication("GaExecHost") and interacting.notEmpty();
 		}
-		
+			
+
 		// Gets the object representing the "GaExecHost" stereotype
 		var stereotype = node.checkAndGetStereotype("GaExecHost");
 		var resTag = node.getValue(stereotype, "resMult");
 		var speedFactor = node.getValue(stereotype, "speedFactor");
-		
-		// Retrieves the clones of this node;
-		var replication = node.getCopies().size();
-		replication = replication == 0 ? "1" else replication.asString();
-		
-		node.name.println("name: ");
-		node.getArtifacts().println();
-		node.getCopies().println("copies: ");
 					
 		var tasks = node.getDeployed();
 		
 		var sources = tasks.collect(i | i.getSources()).flatten;
+			
 		if(sources.notEmpty()) 
 			tasks.addAll(sources);
 					
@@ -68,7 +67,6 @@ rule Node2Processor
 		proc.task ::= tasks;
 		proc.multiplicity = resTag.asBigInteger(); 
 		proc.speedFactor = speedFactor;
-		proc.replication = replication.asBigInteger();
 	}
 
 
@@ -78,32 +76,36 @@ rule Actor2Task
 	{
 		var lifelines = actor.getLifelines();
 		var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
+	
 		task.name = actor.name;
 		task.scheduling = LQN!TaskSchedulingType#ref;
+		
+		task.replication = "1".asBigInteger();	
 		task.entry ::= beses;
 	}
 
 rule Component2Task
 	transform component: UML!Component
 	to task: LQN!TaskType
-	{
-		guard{ 
-			var lifelines = component.getLifelines();	
-			var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
-			return beses.size() > 0;
-		}
-				
-
+	{		
+	
+		component.println("cmpnt: ");
+	
 		var lifelines = component.getLifelines();	
 		var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
+
+		/* Same artifact deployed on two different nodes representing the same processor
+		var nodes = UML!Node.all.select(i | i.getDeployed().includes(component));
+		var replication = nodes.size().asString();
+		*/
 		
 		// Same node different artifacts deploying the same component
 		var artifacts = component.getArtifacts();
-		var artifactsSize = artifacts.size();
-		artifactsSize = artifactsSize == 0 ? "1" else artifactsSize.asString();
+		var artifactsSize = artifacts.size().asString();
 		
 		task.name = component.name;
 		task.entry ::= beses;
+		// task.replication = replication.asBigInteger();	
 		task.multiplicity = artifactsSize.asBigInteger();
 	}
 
