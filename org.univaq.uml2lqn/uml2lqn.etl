@@ -77,7 +77,13 @@ rule Actor2Task
 rule Component2Task
 	transform component: UML!Component
 	to task: LQN!TaskType
-	{		
+	{
+		guard{ 
+			var lifelines = component.getLifelines();	
+			var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
+			return beses.size() > 0;
+		}
+				
 		var lifelines = component.getLifelines();	
 		var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
 		

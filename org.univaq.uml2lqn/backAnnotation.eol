@@ -43,6 +43,11 @@ operation annotate_nodes(proc)
 {	
 	var node_object = UML!Node.all.selectOne(i | i.name = proc.a_name);	
 	
+	if(node_object.isUndefined()){
+		proc.a_name.println("[ERROR] Any node has name --> ");
+		throw "[ERROR] Any node has name --> " + proc.a_name;
+	}
+	
 	var stereotype = node_object.getAppliedStereotypes()
 		.selectOne(i | i.name == "GaExecHost");
 	
