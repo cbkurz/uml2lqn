@@ -4,7 +4,7 @@ var currentRoot = PlainLQN.root;
 
 var subtree = currentRoot.children;
 
-var newTag = new `t_lqn-model`;
+var newTag = new PlainLQN!`t_lqn-model`;
 newTag.a_name = currentRoot.a_name;
 
 for(child in subtree){

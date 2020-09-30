@@ -177,9 +177,16 @@ operation UML!Node isClone(node : UML!Node) : Boolean
 	
 	var selfArtifacts = self.getArtifacts();
 	var nodeArtifacts = node.getArtifacts();
+	
+	if(node.getName().contains("Motor") and self.getName().contains("Motor")){
+		"######## UML!Node isClone ########".println();
+		(self.getName() + " --> " + node.getName()).println("%%%%% -> ");
+		nodeArtifacts.includesAll(selfArtifacts).println("Self-> " + self.getName() + " Node --> " + node.getName() +" includeAll  ");
+		"######## UML!Node isClone ########".println();
+	}
 		
 	if(self.getSpeedFactor() = node.getSpeedFactor() 
-		and nodeArtifacts.includesAll(selfArtifacts))
+		and nodeArtifacts.includesAll(selfArtifacts) and not node.getName().contains(self.getName()+"_"))
 		return true; 
 		
 	return false;
@@ -187,7 +194,8 @@ operation UML!Node isClone(node : UML!Node) : Boolean
 
 operation UML!Node getOrigins() : Sequence
 {
-	var stereotypedNodes = UML!Node.all.select(i | i.checkStereotypeApplication("GaExecHost"));
+	//var stereotypedNodes = UML!Node.all.select(i | i.checkStereotypeApplication("GaExecHost"));
+	var stereotypedNodes = UML!Node.all.select(i | i.checkStereotypeApplication("GaExecHost") and i.getArtifacts().notEmpty());
 	return stereotypedNodes.select(i | self.isClone(i));	
 }
 
