@@ -42,20 +42,20 @@ rule Node2Processor
 				interacting = deployed.select(i | i.isInteracting());
 			
 			
-			if(node.getName().contains("Motor") ){
+			/*if(node.getName().contains("Motor") ){
 				"$$$$$$$$$$$$$$ Node2Process Guard $$$$$$$$$$$$$$".println();
 				node.checkStereotypeApplication("GaExecHost").println("Node --> " + node.getName() + "  check GaExecHost -->");
 				interacting.notEmpty().println("interacting -> ");
 				node.getOrigins().isEmpty().println("node getOrigins --> ");
 				"$$$$$$$$$$$$$$\n".println();
-			}
+			}*/
 			
 			// The transformation considers nodes that are GaExecHost, interacting and are not duplicate
 			return node.checkStereotypeApplication("GaExecHost") and interacting.notEmpty() and node.getOrigins().isEmpty();
 		}
 		
 		
-		node.getName().println("AFTER GUARD --> ");
+		//node.getName().println("AFTER GUARD --> ");
 		
 		// Gets the object representing the "GaExecHost" stereotype
 		var stereotype = node.checkAndGetStereotype("GaExecHost");
@@ -76,7 +76,7 @@ rule Node2Processor
 		if(sources.notEmpty()) 
 			tasks.addAll(sources);
 			
-		tasks.println("^^^^^^^^^^ TASKS in Node2Processor --> " + node.getName() + " --> ");
+		//tasks.println("^^^^^^^^^^ TASKS in Node2Processor --> " + node.getName() + " --> ");
 					
 		proc.name = node.name;
 		proc.task ::= tasks;
@@ -104,17 +104,15 @@ rule Component2Task
 		guard{ 
 			var lifelines = component.getLifelines();	
 			
-			component.getName().println("Component2Task GUARD --> ");
-			lifelines.println("Component2Task GUARD --> ");
+			//component.getName().println("Component2Task GUARD --> ");
+			//lifelines.println("Component2Task GUARD --> ");
 				
 			var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
 			
-			beses.println("Component2Task GUARD --> ");
+			//beses.println("Component2Task GUARD --> ");
 			
 			return beses.size() > 0;
 		}
-		
-				
 
 		var lifelines = component.getLifelines();	
 		var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
