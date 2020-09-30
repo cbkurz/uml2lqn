@@ -41,9 +41,21 @@ rule Node2Processor
 			if(deployed.notEmpty())
 				interacting = deployed.select(i | i.isInteracting());
 			
+			
+			if(node.getName().contains("Motor") ){
+				"$$$$$$$$$$$$$$ Node2Process Guard $$$$$$$$$$$$$$".println();
+				node.checkStereotypeApplication("GaExecHost").println("Node --> " + node.getName() + "  check GaExecHost -->");
+				interacting.notEmpty().println("interacting -> ");
+				node.getOrigins().isEmpty().println("node getOrigins --> ");
+				"$$$$$$$$$$$$$$\n".println();
+			}
+			
 			// The transformation considers nodes that are GaExecHost, interacting and are not duplicate
 			return node.checkStereotypeApplication("GaExecHost") and interacting.notEmpty() and node.getOrigins().isEmpty();
 		}
+		
+		
+		node.getName().println("AFTER GUARD --> ");
 		
 		// Gets the object representing the "GaExecHost" stereotype
 		var stereotype = node.checkAndGetStereotype("GaExecHost");
@@ -54,15 +66,17 @@ rule Node2Processor
 		var replication = node.getCopies().size();
 		replication = replication == 0 ? "1" else replication.asString();
 		
-		node.name.println("name: ");
-		node.getArtifacts().println();
-		node.getCopies().println("copies: ");
+		//node.name.println("name: ");
+		//node.getArtifacts().println();
+		//node.getCopies().println("copies: ");
 					
 		var tasks = node.getDeployed();
 		
 		var sources = tasks.collect(i | i.getSources()).flatten;
 		if(sources.notEmpty()) 
 			tasks.addAll(sources);
+			
+		tasks.println("^^^^^^^^^^ TASKS in Node2Processor --> " + node.getName() + " --> ");
 					
 		proc.name = node.name;
 		proc.task ::= tasks;
@@ -89,9 +103,17 @@ rule Component2Task
 	{
 		guard{ 
 			var lifelines = component.getLifelines();	
+			
+			component.getName().println("Component2Task GUARD --> ");
+			lifelines.println("Component2Task GUARD --> ");
+				
 			var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
+			
+			beses.println("Component2Task GUARD --> ");
+			
 			return beses.size() > 0;
 		}
+		
 				
 
 		var lifelines = component.getLifelines();	
