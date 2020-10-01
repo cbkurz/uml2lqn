@@ -28,6 +28,8 @@
 	
 	<target name="Solver" depends="ChangeRoot">
 		<exec executable="lqns">
+			<arg value="-P"/>
+			<arg value="cycles=yes"/>
 			<arg value="${output}/${name}.xml"/>
 		</exec>
 	</target>

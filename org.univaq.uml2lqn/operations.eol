@@ -49,31 +49,67 @@ operation UML!Node getDeployed(): Collection
 	return manifestation.collect(i | i.getSuppliers()).flatten;	
 }
 
+operation UML!Node getNodeArtifacts(): Collection
+{
+	// If the deployment dependency does not exists, then the deployed element is 
+	if(self.deployment.isEmpty())
+		return new Sequence();
+				
+	// This variable represents the 'deployment' association between a Node and an Artifact
+	var deployment = self.deployment;
+	// It is the object of the artifact deployed on self (Node)
+	var artifacts = deployment.collect(i | i.getSuppliers()).flatten;
+	
+	return artifacts;
+}
+
 /**
- * Retrieves the artifacts representing a given component
+ * Retrieves the artifacts representing a component
  * @return a collection comprising the set of artifacts
  */
-operation UML!Component getArtifacts(): Collection
+operation UML!NamedElement getArtifacts(): Collection
 {
 	var artifacts = UML!Artifact.all();
-	var manifestations = artifacts.manifestation.flatten.select(i | i.supplier.includes(self));
-	return manifestations.collect(i | i.client).flatten;	
+	var output = new Sequence();
+	
+	for(artifact in artifacts)
+	{
+		var manifestation = artifact.manifestation;
+		manifestation = manifestation.select(i | i.supplier.first = self);
+		
+		if(manifestation.notEmpty)
+			output.add(artifact);
+	}	
+		
+	return output;	
+}
+
+operation UML!Artifact getDeployments() : Sequence
+{
+	return UML!Deployment.all().select(i | i.supplier.first = self).flatten;
 }
 
 
+operation UML!Lifeline isInteracting(): Boolean
+{
+	return self.coveredBy.notEmpty();
+}
+	
 /**
  * Checks if it exists a behavioral description involving the input element
- * @param element: UML!NamedElement under investigation
+ * @param element: UML!Component under investigation
  * @return a boolean
  */
 operation UML!NamedElement isInteracting(): Boolean
 {	
 	// Gets all the lifelines involving 'element'
 	var lifelines = self.getLifelines();
+	var interacting = lifelines.select(i | i.isInteracting());
 	
-	if(lifelines.isEmpty())
-		return false;
-	return true;
+	var artifacts = self.getArtifacts().flatten;
+	var deployments = artifacts.collect(i | i.getDeployments()).flatten;
+		
+	return interacting.notEmpty();
 }
 
 /**
@@ -112,7 +148,7 @@ operation UML!Component getSources(): Collection
 	// Gets the BehaviorExecutionSpecification for each lifeline involving 'self'
 	var beses = lifelines.collect(i | i.getElements("BehaviorExecutionSpecification")).flatten;
 	
-	beses = beses.select(i | i.isAllowed());	
+	beses = beses.select(i | i.isWellFormed());	
 	
 	// Retrieves the lifelines that sending a message to 'self'
 	var sources = beses.collect(i | i.start.message.sendEvent.covered).flatten;
@@ -129,8 +165,9 @@ operation UML!Component getSources(): Collection
  * start event and the finish event
  * @return a boolean stating if the property is verified or not
  */
-operation UML!BehaviorExecutionSpecification isAllowed() : Boolean
+operation UML!BehaviorExecutionSpecification isWellFormed() : Boolean
 {
+
 	if(self.start.isTypeOf(MessageOccurrenceSpecification) and 
 		self.finish.isTypeOf(MessageOccurrenceSpecification))
 		return true;
@@ -169,41 +206,6 @@ operation UML!Node getArtifacts()
 	return self.deployment.flatten.deployedArtifact.flatten;
 }
 
-// Checks if self is a clone
-operation UML!Node isClone(node : UML!Node) : Boolean 
-{
-	if(self.id = node.id)
-		return false;
-	
-	var selfArtifacts = self.getArtifacts();
-	var nodeArtifacts = node.getArtifacts();
-	
-	/*if(node.getName().contains("Motor") and self.getName().contains("Motor")){
-		"######## UML!Node isClone ########".println();
-		(self.getName() + " --> " + node.getName()).println("%%%%% -> ");
-		nodeArtifacts.includesAll(selfArtifacts).println("Self-> " + self.getName() + " Node --> " + node.getName() +" includeAll  ");
-		"######## UML!Node isClone ########".println();
-	}*/
-		
-	if(self.getSpeedFactor() = node.getSpeedFactor() 
-		and nodeArtifacts.includesAll(selfArtifacts) and not node.getName().contains(self.getName()+"_"))
-		return true; 
-		
-	return false;
-}
-
-operation UML!Node getOrigins() : Sequence
-{
-	//var stereotypedNodes = UML!Node.all.select(i | i.checkStereotypeApplication("GaExecHost"));
-	var stereotypedNodes = UML!Node.all.select(i | i.checkStereotypeApplication("GaExecHost") and i.getArtifacts().notEmpty());
-	return stereotypedNodes.select(i | self.isClone(i));	
-}
-
-operation UML!Node getCopies() : Sequence
-{
-	var stereotypedNodes = UML!Node.all.select(i | i.checkStereotypeApplication("GaExecHost") and i.getArtifacts().notEmpty());
-	return stereotypedNodes.select(i | i.isClone(self));	
-}
 
 /* 
  * Operations to implement the replication of tasks; 

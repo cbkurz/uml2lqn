@@ -20,11 +20,16 @@ operation UML!UseCase annotate_scenario()
 	var stereotype = self.getAppliedStereotypes().selectOne(i | i.name = "GaScenario");
 	// Sets Response Time
 	var resptime = get_scenario_resptime(self);
+	
+	resptime.println();
+	
 	self.setValue(stereotype, "respT", Sequence{resptime.asString()});
 	
 	// Sets Throughput
 	var root = self.getValue(stereotype, "root");
-	var throughput = root.rep.asDouble / resptime; 
+	
+	var throughput = root.rep.asDouble() / resptime; 
+	
 	self.setValue(stereotype, "throughput", Sequence{throughput.asString()});
 	
 	UML.store().println("Scenario: " + self.name + " ResponseTime: " +
@@ -49,13 +54,7 @@ operation annotate_nodes(proc)
 		.select(i | i.name = "result-processor").a_utilization;	
 			
 	node_object.setValue(stereotype, "utilization", utilization);
-	var copies = node_object.getCopies();
 
-	for(copy in copies)
-	{	
-		copy.setValue(stereotype, "utilization", utilization);
-	}
-	
 	UML.store().println("Processor: " + proc.a_name + " Utilization: " +
 		utilization.first + " Stored: ");
 }
@@ -81,9 +80,13 @@ operation annotate_activity(activity)
 }
 
 operation get_scenario_resptime(scenario : UML!UseCase)
-{
+{		
 	// Gets the names of the actors triggering the events in the sequences
 	var lifelines = scenario.classifierBehavior.lifelines.select(i | i.checkStereotypeApplication("GaWorkloadEvent"));
+	
+	if(lifelines.isEmpty())
+		throw "Error: GaWorkloadEvent not found in scenario's lifelines";
+	
 	var types = lifelines.represents.collect(i | i.getType().name);
 	
 	// Get all the reference task;
@@ -91,9 +94,10 @@ operation get_scenario_resptime(scenario : UML!UseCase)
 	
 	var entries = reference_tasks.getChildren("entry");
 	var entryPhases = entries.getChildren("entry-phase-activities");
+		
 	var activities = entryPhases.getChildren("activity");
-	
-	var times = activities.getChildren("result-activity").`a_service-time`;
+	var times = activities.getChildren("result-activity").`a_service-time`;	
+
 	times = times.collect(i | i.asDouble());
 	
 	return times.sum();
@@ -104,31 +108,3 @@ operation Collection getChildren(name : String)
 {
 	return self.children.flatten.select(i | i.tagName = name);
 }
-
-/*
-// Adds throughput and utilization to BES instances
-operation annotate_entries(entry)
-{
-	
-	var bes_object = UML!BehaviorExecutionSpecification.all
-		.selectOne(i | i.name = entry.a_name);	
-		
-	var stereotype = bes_object.getAppliedStereotypes()
-		.selectOne(i | i.name == "GaScenario");
-	
-	
-	var results = entry.children.flatten
-		.select(i | i.name = "result-entry");	
-	
-	var utilization = results.a_utilization;
-	var throughput = results.a_throughput;
-	
-	//bes_object.setValue(stereotype, "utilization", utilization);
-	// bes_object.setValue(stereotype, "throughput", throughput);
-	
-	UML.store().println("Entry: " + entry.a_name + " Utilization: " +
-		utilization.first + " Throughput: " + throughput.first + 
-			" Stored: ");
-
-}
-*/

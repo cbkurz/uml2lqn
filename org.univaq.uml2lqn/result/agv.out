@@ -3,74 +3,79 @@ Copyright the Real-Time and Distributed Systems Group,
 Department of Systems and Computer Engineering
 Carleton University, Ottawa, Ontario, Canada. K1S 5B6
 
-Invoked as: lqns result/agv.xml
+Invoked as: lqns --pragma=cycles=yes result/agv.xml
 Input:  result/agv.xml
-Mon Sep 28 18:25:27 2020
+Thu Oct  1 15:59:12 2020
 
 Comment: 
 
-Convergence test value: 2.60858e-07
-Number of iterations:   7
+Convergence test value: 2.66843e-06
+Number of iterations:   8
+
+Pragma:
+    cycles=yes
 
 Solver: xeder-workstation Linux 5.8.6-1-MANJARO
-    User:        0:00:00.004
-    System:      0:00:00.000
-    Elapsed:     0:00:00.004
+    User:        0:00:00.014
+    Elapsed:     0:00:00.015
 
 
     Submodels:  3
-    MVA Core():           21
-    MVA Step():          362
-    MVA Wait():       252464
+    MVA Core():           24
+    MVA Step():          570
+    MVA Wait():  1.25959e+06
 
 Processor identifiers and scheduling algorithms:
 
 Processor Name  Type    Copies  Scheduling
-AutomatedGuidedVehicle Uni       1     FCFS
-Motor           Uni       1     FCFS
+VehicleController Mult(2)   1     FCFS
+ArrivalSensor   Uni       1     FCFS
+VehicleStatus   Mult(2)   1     FCFS
 RobotArm        Uni       1     FCFS
-DisplaySystem   Uni       1     FCFS
-New-Node_ajsiiumlvp Uni       1     FCFS
+Motor           Uni       1     FCFS
+New-Node_azrnvharsl Mult(2)   1     FCFS
 
 
 Task information:
 
 Task Name       Type    Copies  Processor Name  Pri Entry List
-vehicle-status  Uni       1     AutomatedGuidedVehicle 0   status_bes
-motor           Uni       1     Motor           0   motor0_bes, motor1_bes
+vehicle-control Uni       1     VehicleController 0   control0_bes
+SupervisorySystem Ref(1)    1     VehicleController 0   ss_bes
+arrival-sensor  Uni       1     ArrivalSensor   0   
+ArrivalSensor   Ref(1)    1     ArrivalSensor   0   arrival_sensor_bes
+vehicle-status  Uni       1     VehicleStatus   0   status_bes, control2_bes
+Clock           Ref(1)    1     VehicleStatus   0   clk_bes
 robot-arm       Uni       1     RobotArm        0   arm_bes
-display-system  Uni       1     DisplaySystem   0   display_bes
-vehicle-control Mult(2)   1     New-Node_ajsiiumlvp 0   control1_bes, control0_bes, control2_bes
-ArrivalSensor   Ref(1)    1     New-Node_ajsiiumlvp 0   arrival_sensor_bes
-SupervisorySystem Ref(1)    1     New-Node_ajsiiumlvp 0   ss_bes
-Clock           Ref(1)    1     New-Node_ajsiiumlvp 0   clk_bes
+motor           Uni       1     Motor           0   motor0_bes, motor1_bes
+New-Component_wrtqrjnmow Uni       1     New-Node_azrnvharsl 0   display_bes
 
 
 Entry execution demands:
 
 Task Name       Entry Name      Phase 1     
+vehicle-control control0_bes    0.159       
+SupervisorySystem ss_bes          0.423       
+arrival-sensor                  0.741       
+ArrivalSensor   arrival_sensor_bes 0.5         
 vehicle-status  status_bes      0.654       
+                control2_bes    0.742       
+Clock           clk_bes         0.358       
+robot-arm       arm_bes         0.741       
 motor           motor0_bes      0.159       
                 motor1_bes      0.96        
-robot-arm       arm_bes         0.741       
-display-system  display_bes     0.742       
-vehicle-control control1_bes    0.741       
-                control0_bes    0.423       
-                control2_bes    0.742       
-ArrivalSensor   arrival_sensor_bes 0.5         
-SupervisorySystem ss_bes          0.423       
-Clock           clk_bes         0.358       
+New-Component_wrtqrjnmow display_bes     0.742       
 
 
 Mean number of rendezvous from entry to entry:
 
 Task Name       Source Entry    Target Entry    Phase 1     
-vehicle-control control1_bes    motor1_bes      1           
-                control1_bes    arm_bes         1           
-                control2_bes    status_bes      1           
-                control2_bes    display_bes     1           
-ArrivalSensor   arrival_sensor_bes control1_bes    1           
+vehicle-control control0_bes    motor0_bes      1           
 SupervisorySystem ss_bes          control0_bes    1           
+arrival-sensor                  motor1_bes      1           
+                                arm_bes         1           
+ArrivalSensor   arrival_sensor_bes                 1           
+vehicle-status  control2_bes    status_bes      1           
+                control2_bes    display_bes     1           
 Clock           clk_bes         control2_bes    1           
 
 
@@ -89,116 +94,124 @@ All open arrival rates are 0.
 Type 1 throughput bounds: 
 
 Task Name       Entry Name      Throughput  
+vehicle-control control0_bes    3.14465     
+SupervisorySystem ss_bes          1.34953     
+arrival-sensor                  0.4095      
+ArrivalSensor   arrival_sensor_bes 0.339905    
 vehicle-status  status_bes      1.52905     
+                control2_bes    0.673854    
+Clock           clk_bes         0.542888    
+robot-arm       arm_bes         1.34953     
 motor           motor0_bes      6.28931     
                 motor1_bes      1.04167     
-robot-arm       arm_bes         1.34953     
-display-system  display_bes     1.34771     
-vehicle-control control1_bes    0.819001    
-                control0_bes    4.72813     
-                control2_bes    0.935454    
-ArrivalSensor   arrival_sensor_bes 0.339905    
-SupervisorySystem ss_bes          1.18203     
-Clock           clk_bes         0.400641    
+New-Component_wrtqrjnmow display_bes     1.34771     
 
 
 Mean delay for a rendezvous:
 
 Task Name       Source Entry    Target Entry    Phase 1     
-vehicle-control control1_bes    motor1_bes      0.114718    
-                control1_bes    arm_bes         0.0683478   
-                control2_bes    status_bes      0.0592703   
-                control2_bes    display_bes     0.0762939   
-ArrivalSensor   arrival_sensor_bes control1_bes    0.502728    
-SupervisorySystem ss_bes          control0_bes    1.26897     
-Clock           clk_bes         control2_bes    0.506663    
+vehicle-control control0_bes    motor0_bes      0.295745    
+SupervisorySystem ss_bes          control0_bes    0           
+arrival-sensor                  motor1_bes      0.0340702   
+                                arm_bes         0           
+ArrivalSensor   arrival_sensor_bes                 0           
+vehicle-status  control2_bes    status_bes      0           
+                control2_bes    display_bes     0           
+Clock           clk_bes         control2_bes    0           
 
 
 Service times:
 
 Task Name       Entry Name      Phase 1     
-vehicle-status  status_bes      0.654       
+vehicle-control control0_bes    0.615526    
+SupervisorySystem ss_bes          1.03856     
+arrival-sensor                  2.47607     
+ArrivalSensor   arrival_sensor_bes 2.97607     
+vehicle-status  status_bes      0.65403     
+                control2_bes    2.13812     
+Clock           clk_bes         2.50205     
+robot-arm       arm_bes         0.741       
 motor           motor0_bes      0.159       
                 motor1_bes      0.96        
-robot-arm       arm_bes         0.741       
-display-system  display_bes     0.742       
-vehicle-control control1_bes    3.1052      
-                control0_bes    0.583046    
-                control2_bes    2.7537      
-ArrivalSensor   arrival_sensor_bes 4.53935     
-SupervisorySystem ss_bes          2.68302     
-Clock           clk_bes         4.07756     
+New-Component_wrtqrjnmow display_bes     0.742       
 
 
 Service time variance (per phase)
 and squared coefficient of variation (over all phases):
 
 Task Name       Entry Name      Phase 1     coeff of var **2
-vehicle-status  status_bes      0.427716    1           
+vehicle-control control0_bes    0.698128    1.84265     
+SupervisorySystem ss_bes          2.1556      1.99849     
+arrival-sensor                  6.68767     1.09081     
+ArrivalSensor   arrival_sensor_bes 21.6756     2.44728     
+vehicle-status  status_bes      0.427716    0.999908    
+                control2_bes    4.7445      1.03783     
+Clock           clk_bes         15.5742     2.48779     
+robot-arm       arm_bes         0.549081    1           
 motor           motor0_bes      0.025281    1           
                 motor1_bes      0.9216      1           
-robot-arm       arm_bes         0.549081    1           
-display-system  display_bes     0.550564    1           
-vehicle-control control1_bes    9.09885     0.943641    
-                control0_bes    0.204544    0.601701    
-                control2_bes    6.76424     0.892042    
-ArrivalSensor   arrival_sensor_bes 42.7588     2.07509     
-SupervisorySystem ss_bes          12.2708     1.70461     
-Clock           clk_bes         34.113      2.05173     
+New-Component_wrtqrjnmow display_bes     0.550564    1           
 
 
 Throughputs and utilizations per phase:
 
 Task Name       Entry Name      Throughput  Phase 1     Total       
-vehicle-status  status_bes      0.245245    0.16039     0.16039
-motor           motor0_bes      0           0           0
-                motor1_bes      0.220296    0.211484    0.211484
-Total:                          0.220296    0.211484    0.211484
-robot-arm       arm_bes         0.220296    0.163239    0.163239
-display-system  display_bes     0.245245    0.181972    0.181972
-vehicle-control control1_bes    0.220296    0.684063    0.684063
-                control0_bes    0.372715    0.21731     0.21731
-                control2_bes    0.245245    0.675331    0.675331
-Total:                          0.838255    1.5767      1.5767
-ArrivalSensor   arrival_sensor_bes 0.220296    1           1
-SupervisorySystem ss_bes          0.372715    1           1
-Clock           clk_bes         0.245245    1           1
+vehicle-control control0_bes    0.96287     0.592672    0.592672
+SupervisorySystem ss_bes          0.96287     1           1
+arrival-sensor                  0.336014    0.831993    0.831993
+ArrivalSensor   arrival_sensor_bes 0.336014    1           1
+vehicle-status  status_bes      0.365475    0.239032    0.239032
+                control2_bes    0.399673    0.854548    0.854548
+Total:                          0.765147    1.09358     1.09358
+Clock           clk_bes         0.399673    1           1
+robot-arm       arm_bes         0.336014    0.248986    0.248986
+motor           motor0_bes      0.96287     0.153096    0.153096
+                motor1_bes      0.336014    0.322573    0.322573
+Total:                          1.29888     0.475669    0.475669
+New-Component_wrtqrjnmow display_bes     0.365472    0.27118     0.27118
 
 
-Utilization and waiting per phase for processor:  AutomatedGuidedVehicle
-
-Task Name       Pri n   Entry Name      Utilization Phase 1     
-vehicle-status  0   1   status_bes      0.16039     0           
-
-
-Utilization and waiting per phase for processor:  Motor
+Utilization and waiting per phase for processor:  VehicleController
 
 Task Name       Pri n   Entry Name      Utilization Phase 1     
-motor           0   1   motor0_bes      0           0           
-                        motor1_bes      0.211484    0           
-Task Total:                             0.211484    
+vehicle-control 0   1   control0_bes    0.153096    0.0017815   
+SupervisorySystem 0   1   ss_bes          0.407294    0           
+Processor Total:                        0.560391
+
+
+Utilization and waiting per phase for processor:  ArrivalSensor
+
+Task Name       Pri n   Entry Name      Utilization Phase 1     
+arrival-sensor  0   1                   0.248986    0           
+ArrivalSensor   0   1   arrival_sensor_bes 0.168007    0           
+Processor Total:                        0.416993
+
+
+Utilization and waiting per phase for processor:  VehicleStatus
+
+Task Name       Pri n   Entry Name      Utilization Phase 1     
+vehicle-status  0   1   status_bes      0.239021    0           
+                        control2_bes    0.296557    9.03196e-05 
+Task Total:                             0.535578    
+Clock           0   1   clk_bes         0.143083    0.00592739  
+Processor Total:                        0.67866
 
 
 Utilization and waiting per phase for processor:  RobotArm
 
 Task Name       Pri n   Entry Name      Utilization Phase 1     
-robot-arm       0   1   arm_bes         0.163239    0           
+robot-arm       0   1   arm_bes         0.248986    0           
 
 
-Utilization and waiting per phase for processor:  DisplaySystem
-
-Task Name       Pri n   Entry Name      Utilization Phase 1     
-display-system  0   1   display_bes     0.181972    0           
-
-
-Utilization and waiting per phase for processor:  New-Node_ajsiiumlvp
+Utilization and waiting per phase for processor:  Motor
 
 Task Name       Pri n   Entry Name      Utilization Phase 1     
-vehicle-control 0   2   control1_bes    0.163239    0.480137    
-                        control0_bes    0.157658    0.160046    
-                        control2_bes    0.181972    0.480137    
-Task Total:                             0.502869    
-ArrivalSensor   0   1   arrival_sensor_bes 0.110148    0.431424    
-SupervisorySystem 0   1   ss_bes          0.157658    0.408005    
-Clock           0   1   clk_bes         0.0877977   0.459193    
-Processor Total:                        0.858473
+motor           0   1   motor0_bes      0.153096    0           
+                        motor1_bes      0.322573    0           
+Task Total:                             0.475669    
+
+
+Utilization and waiting per phase for processor:  New-Node_azrnvharsl
+
+Task Name       Pri n   Entry Name      Utilization Phase 1     
+New-Component_wrtqrjnmow 0   1   display_bes     0.27118     0           

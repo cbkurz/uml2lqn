@@ -1,155 +1,165 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
-<!-- lqns -->
+<!-- lqns -pragma=cycles=yes -->
 <lqn-model name="result/agv" description="lqns 5.17 solution for model from: result/agv.xml." xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="/usr/local/share/lqns/lqn.xsd">
    <solver-params comment="0" conv_val="1e-05" it_limit="50" underrelax_coeff="0.9" print_int="10">
-      <result-general solver-info="lqns 5.17" valid="YES" conv-val="2.60858e-07" iterations="7" platform-info="xeder-workstation Linux 5.8.6-1-MANJARO" user-cpu-time=" 0:00:00.002" system-cpu-time=" 0:00:00.000" elapsed-time=" 0:00:00.003">
-         <mva-info submodels="3" core="21" step="362" step-squared="7878" wait="252464" wait-squared="9.44779e+09" faults="0"/>
+      <pragma param="cycles" value="yes"/>
+      <result-general solver-info="lqns 5.17" valid="YES" conv-val="2.66843e-06" iterations="8" platform-info="xeder-workstation Linux 5.8.6-1-MANJARO" user-cpu-time=" 0:00:00.009" system-cpu-time=" 0:00:00.000" elapsed-time=" 0:00:00.009">
+         <mva-info submodels="3" core="24" step="570" step-squared="19440" wait="1.25959e+06" wait-squared="1.89688e+11" faults="0"/>
       </result-general>
    </solver-params>
-   <processor name="AutomatedGuidedVehicle" scheduling="fcfs">
-      <result-processor utilization="0.16039"/>
-      <task name="vehicle-status" scheduling="fcfs">
-         <result-task throughput="0.245245" utilization="0.16039" phase1-utilization="0.16039" proc-utilization="0.16039"/>
-         <entry name="status_bes" type="PH1PH2">
-            <result-entry utilization="0.16039" throughput="0.245245" squared-coeff-variation="1" proc-utilization="0.16039" throughput-bound="1.52905"/>
-            <entry-phase-activities>
-               <activity name="get_status_message" phase="1" host-demand-mean="0.654">
-                  <result-activity proc-waiting="0" service-time="0.654" utilization="0.16039" service-time-variance="0.427716"/>
-               </activity>
-            </entry-phase-activities>
-         </entry>
-      </task>
-   </processor>
-   <processor name="Motor" scheduling="fcfs">
-      <result-processor utilization="0.211484"/>
-      <task name="motor" scheduling="fcfs">
-         <result-task throughput="0.220296" utilization="0.211484" phase1-utilization="0.211484" proc-utilization="0.211484"/>
-         <entry name="motor0_bes" type="PH1PH2">
-            <result-entry utilization="0" throughput="0" squared-coeff-variation="1" proc-utilization="0" throughput-bound="6.28931"/>
+   <processor name="VehicleController" scheduling="fcfs" multiplicity="2">
+      <result-processor utilization="0.560391"/>
+      <task name="vehicle-control" scheduling="fcfs">
+         <result-task throughput="0.96287" utilization="0.592672" phase1-utilization="0.592672" proc-utilization="0.153096"/>
+         <entry name="control0_bes" type="PH1PH2">
+            <result-entry utilization="0.592672" throughput="0.96287" squared-coeff-variation="1.84265" proc-utilization="0.153096" throughput-bound="3.14465"/>
             <entry-phase-activities>
                <activity name="start_motor_message" phase="1" host-demand-mean="0.159">
-                  <result-activity proc-waiting="0" service-time="0.159" utilization="0" service-time-variance="0.025281"/>
-               </activity>
-            </entry-phase-activities>
-         </entry>
-         <entry name="motor1_bes" type="PH1PH2">
-            <result-entry utilization="0.211484" throughput="0.220296" squared-coeff-variation="1" proc-utilization="0.211484" throughput-bound="1.04167"/>
-            <entry-phase-activities>
-               <activity name="stop_message" phase="1" host-demand-mean="0.96">
-                  <result-activity proc-waiting="0" service-time="0.96" utilization="0.211484" service-time-variance="0.9216"/>
-               </activity>
-            </entry-phase-activities>
-         </entry>
-      </task>
-   </processor>
-   <processor name="RobotArm" scheduling="fcfs">
-      <result-processor utilization="0.163239"/>
-      <task name="robot-arm" scheduling="fcfs">
-         <result-task throughput="0.220296" utilization="0.163239" phase1-utilization="0.163239" proc-utilization="0.163239"/>
-         <entry name="arm_bes" type="PH1PH2">
-            <result-entry utilization="0.163239" throughput="0.220296" squared-coeff-variation="1" proc-utilization="0.163239" throughput-bound="1.34953"/>
-            <entry-phase-activities>
-               <activity name="load_message" phase="1" host-demand-mean="0.741">
-                  <result-activity proc-waiting="0" service-time="0.741" utilization="0.163239" service-time-variance="0.549081"/>
-               </activity>
-            </entry-phase-activities>
-         </entry>
-      </task>
-   </processor>
-   <processor name="DisplaySystem" scheduling="fcfs">
-      <result-processor utilization="0.181972"/>
-      <task name="display-system" scheduling="fcfs">
-         <result-task throughput="0.245245" utilization="0.181972" phase1-utilization="0.181972" proc-utilization="0.181972"/>
-         <entry name="display_bes" type="PH1PH2">
-            <result-entry utilization="0.181972" throughput="0.245245" squared-coeff-variation="1" proc-utilization="0.181972" throughput-bound="1.34771"/>
-            <entry-phase-activities>
-               <activity name="display_message" phase="1" host-demand-mean="0.742">
-                  <result-activity proc-waiting="0" service-time="0.742" utilization="0.181972" service-time-variance="0.550564"/>
-               </activity>
-            </entry-phase-activities>
-         </entry>
-      </task>
-   </processor>
-   <processor name="New-Node_ajsiiumlvp" scheduling="fcfs">
-      <result-processor utilization="0.858473"/>
-      <task name="vehicle-control" scheduling="fcfs" multiplicity="2">
-         <result-task throughput="0.838255" utilization="1.5767" phase1-utilization="1.5767" proc-utilization="0.502869"/>
-         <entry name="control1_bes" type="PH1PH2">
-            <result-entry utilization="0.684063" throughput="0.220296" squared-coeff-variation="0.943641" proc-utilization="0.163239" throughput-bound="0.819001"/>
-            <entry-phase-activities>
-               <activity name="load_message" phase="1" host-demand-mean="0.741">
-                  <result-activity proc-waiting="0.480137" service-time="3.1052" utilization="0.684063" service-time-variance="9.09885"/>
-                  <synch-call dest="motor1_bes" calls-mean="1">
-                     <result-call waiting="0.114718"/>
-                  </synch-call>
-                  <synch-call dest="arm_bes" calls-mean="1">
-                     <result-call waiting="0.0683478"/>
-                  </synch-call>
-               </activity>
-            </entry-phase-activities>
-         </entry>
-         <entry name="control0_bes" type="PH1PH2">
-            <result-entry utilization="0.21731" throughput="0.372715" squared-coeff-variation="0.601701" proc-utilization="0.157658" throughput-bound="4.72813"/>
-            <entry-phase-activities>
-               <activity name="move_message" phase="1" host-demand-mean="0.423">
-                  <result-activity proc-waiting="0.160046" service-time="0.583046" utilization="0.21731" service-time-variance="0.204544"/>
-               </activity>
-            </entry-phase-activities>
-         </entry>
-         <entry name="control2_bes" type="PH1PH2">
-            <result-entry utilization="0.675331" throughput="0.245245" squared-coeff-variation="0.892042" proc-utilization="0.181972" throughput-bound="0.935454"/>
-            <entry-phase-activities>
-               <activity name="display_message" phase="1" host-demand-mean="0.742">
-                  <result-activity proc-waiting="0.480137" service-time="2.7537" utilization="0.675331" service-time-variance="6.76424"/>
-                  <synch-call dest="status_bes" calls-mean="1">
-                     <result-call waiting="0.0592703"/>
-                  </synch-call>
-                  <synch-call dest="display_bes" calls-mean="1">
-                     <result-call waiting="0.0762939"/>
-                  </synch-call>
-               </activity>
-            </entry-phase-activities>
-         </entry>
-      </task>
-      <task name="ArrivalSensor" scheduling="ref">
-         <result-task throughput="0.220296" utilization="1" phase1-utilization="1" proc-utilization="0.110148"/>
-         <entry name="arrival_sensor_bes" type="PH1PH2">
-            <result-entry utilization="1" throughput="0.220296" squared-coeff-variation="2.07509" proc-utilization="0.110148" throughput-bound="0.339905"/>
-            <entry-phase-activities>
-               <activity name="arrived_message" phase="1" host-demand-mean="0.5">
-                  <result-activity proc-waiting="0.431424" service-time="4.53935" utilization="1" service-time-variance="42.7588"/>
-                  <synch-call dest="control1_bes" calls-mean="1">
-                     <result-call waiting="0.502728"/>
+                  <result-activity proc-waiting="0.0017815" service-time="0.615526" utilization="0.592672" service-time-variance="0.698128"/>
+                  <synch-call dest="motor0_bes" calls-mean="1">
+                     <result-call waiting="0.295745"/>
                   </synch-call>
                </activity>
             </entry-phase-activities>
          </entry>
       </task>
       <task name="SupervisorySystem" scheduling="ref">
-         <result-task throughput="0.372715" utilization="1" phase1-utilization="1" proc-utilization="0.157658"/>
+         <result-task throughput="0.96287" utilization="1" phase1-utilization="1" proc-utilization="0.407294"/>
          <entry name="ss_bes" type="PH1PH2">
-            <result-entry utilization="1" throughput="0.372715" squared-coeff-variation="1.70461" proc-utilization="0.157658" throughput-bound="1.18203"/>
+            <result-entry utilization="1" throughput="0.96287" squared-coeff-variation="1.99849" proc-utilization="0.407294" throughput-bound="1.34953"/>
             <entry-phase-activities>
                <activity name="move_message" phase="1" host-demand-mean="0.423">
-                  <result-activity proc-waiting="0.408005" service-time="2.68302" utilization="1" service-time-variance="12.2708"/>
+                  <result-activity proc-waiting="0" service-time="1.03856" utilization="1" service-time-variance="2.1556"/>
                   <synch-call dest="control0_bes" calls-mean="1">
-                     <result-call waiting="1.26897"/>
+                     <result-call waiting="0"/>
+                  </synch-call>
+               </activity>
+            </entry-phase-activities>
+         </entry>
+      </task>
+   </processor>
+   <processor name="ArrivalSensor" scheduling="fcfs">
+      <result-processor utilization="0.416993"/>
+      <task name="arrival-sensor" scheduling="fcfs">
+         <result-task throughput="0.336014" utilization="0.831993" phase1-utilization="0.831993" proc-utilization="0.248986"/>
+         <entry name="" type="PH1PH2">
+            <result-entry utilization="0.831993" throughput="0.336014" squared-coeff-variation="1.09081" proc-utilization="0.248986" throughput-bound="0.4095"/>
+            <entry-phase-activities>
+               <activity name="load_message" phase="1" host-demand-mean="0.741">
+                  <result-activity proc-waiting="0" service-time="2.47607" utilization="0.831993" service-time-variance="6.68767"/>
+                  <synch-call dest="motor1_bes" calls-mean="1">
+                     <result-call waiting="0.0340702"/>
+                  </synch-call>
+                  <synch-call dest="arm_bes" calls-mean="1">
+                     <result-call waiting="0"/>
+                  </synch-call>
+               </activity>
+            </entry-phase-activities>
+         </entry>
+      </task>
+      <task name="ArrivalSensor" scheduling="ref">
+         <result-task throughput="0.336014" utilization="1" phase1-utilization="1" proc-utilization="0.168007"/>
+         <entry name="arrival_sensor_bes" type="PH1PH2">
+            <result-entry utilization="1" throughput="0.336014" squared-coeff-variation="2.44728" proc-utilization="0.168007" throughput-bound="0.339905"/>
+            <entry-phase-activities>
+               <activity name="arrived_message" phase="1" host-demand-mean="0.5">
+                  <result-activity proc-waiting="0" service-time="2.97607" utilization="1" service-time-variance="21.6756"/>
+                  <synch-call dest="" calls-mean="1">
+                     <result-call waiting="0"/>
+                  </synch-call>
+               </activity>
+            </entry-phase-activities>
+         </entry>
+      </task>
+   </processor>
+   <processor name="VehicleStatus" scheduling="fcfs" multiplicity="2">
+      <result-processor utilization="0.67866"/>
+      <task name="vehicle-status" scheduling="fcfs">
+         <result-task throughput="0.765147" utilization="1.09358" phase1-utilization="1.09358" proc-utilization="0.535578"/>
+         <entry name="status_bes" type="PH1PH2">
+            <result-entry utilization="0.239032" throughput="0.365475" squared-coeff-variation="0.999908" proc-utilization="0.239021" throughput-bound="1.52905"/>
+            <entry-phase-activities>
+               <activity name="get_status_message" phase="1" host-demand-mean="0.654">
+                  <result-activity proc-waiting="0" service-time="0.65403" utilization="0.239032" service-time-variance="0.427716"/>
+               </activity>
+            </entry-phase-activities>
+         </entry>
+         <entry name="control2_bes" type="PH1PH2">
+            <result-entry utilization="0.854548" throughput="0.399673" squared-coeff-variation="1.03783" proc-utilization="0.296557" throughput-bound="0.673854"/>
+            <entry-phase-activities>
+               <activity name="display_message" phase="1" host-demand-mean="0.742">
+                  <result-activity proc-waiting="9.03196e-05" service-time="2.13812" utilization="0.854548" service-time-variance="4.7445"/>
+                  <synch-call dest="status_bes" calls-mean="1">
+                     <result-call waiting="0"/>
+                  </synch-call>
+                  <synch-call dest="display_bes" calls-mean="1">
+                     <result-call waiting="0"/>
                   </synch-call>
                </activity>
             </entry-phase-activities>
          </entry>
       </task>
       <task name="Clock" scheduling="ref">
-         <result-task throughput="0.245245" utilization="1" phase1-utilization="1" proc-utilization="0.0877977"/>
+         <result-task throughput="0.399673" utilization="1" phase1-utilization="1" proc-utilization="0.143083"/>
          <entry name="clk_bes" type="PH1PH2">
-            <result-entry utilization="1" throughput="0.245245" squared-coeff-variation="2.05173" proc-utilization="0.0877977" throughput-bound="0.400641"/>
+            <result-entry utilization="1" throughput="0.399673" squared-coeff-variation="2.48779" proc-utilization="0.143083" throughput-bound="0.542888"/>
             <entry-phase-activities>
                <activity name="expired_message" phase="1" host-demand-mean="0.358">
-                  <result-activity proc-waiting="0.459193" service-time="4.07756" utilization="1" service-time-variance="34.113"/>
+                  <result-activity proc-waiting="0.00592739" service-time="2.50205" utilization="1" service-time-variance="15.5742"/>
                   <synch-call dest="control2_bes" calls-mean="1">
-                     <result-call waiting="0.506663"/>
+                     <result-call waiting="0"/>
                   </synch-call>
+               </activity>
+            </entry-phase-activities>
+         </entry>
+      </task>
+   </processor>
+   <processor name="RobotArm" scheduling="fcfs">
+      <result-processor utilization="0.248986"/>
+      <task name="robot-arm" scheduling="fcfs">
+         <result-task throughput="0.336014" utilization="0.248986" phase1-utilization="0.248986" proc-utilization="0.248986"/>
+         <entry name="arm_bes" type="PH1PH2">
+            <result-entry utilization="0.248986" throughput="0.336014" squared-coeff-variation="1" proc-utilization="0.248986" throughput-bound="1.34953"/>
+            <entry-phase-activities>
+               <activity name="load_message" phase="1" host-demand-mean="0.741">
+                  <result-activity proc-waiting="0" service-time="0.741" utilization="0.248986" service-time-variance="0.549081"/>
+               </activity>
+            </entry-phase-activities>
+         </entry>
+      </task>
+   </processor>
+   <processor name="Motor" scheduling="fcfs">
+      <result-processor utilization="0.475669"/>
+      <task name="motor" scheduling="fcfs">
+         <result-task throughput="1.29888" utilization="0.475669" phase1-utilization="0.475669" proc-utilization="0.475669"/>
+         <entry name="motor0_bes" type="PH1PH2">
+            <result-entry utilization="0.153096" throughput="0.96287" squared-coeff-variation="1" proc-utilization="0.153096" throughput-bound="6.28931"/>
+            <entry-phase-activities>
+               <activity name="start_motor_message" phase="1" host-demand-mean="0.159">
+                  <result-activity proc-waiting="0" service-time="0.159" utilization="0.153096" service-time-variance="0.025281"/>
+               </activity>
+            </entry-phase-activities>
+         </entry>
+         <entry name="motor1_bes" type="PH1PH2">
+            <result-entry utilization="0.322573" throughput="0.336014" squared-coeff-variation="1" proc-utilization="0.322573" throughput-bound="1.04167"/>
+            <entry-phase-activities>
+               <activity name="stop_message" phase="1" host-demand-mean="0.96">
+                  <result-activity proc-waiting="0" service-time="0.96" utilization="0.322573" service-time-variance="0.9216"/>
+               </activity>
+            </entry-phase-activities>
+         </entry>
+      </task>
+   </processor>
+   <processor name="New-Node_azrnvharsl" scheduling="fcfs" multiplicity="2">
+      <result-processor utilization="0.27118"/>
+      <task name="New-Component_wrtqrjnmow" scheduling="fcfs">
+         <result-task throughput="0.365472" utilization="0.27118" phase1-utilization="0.27118" proc-utilization="0.27118"/>
+         <entry name="display_bes" type="PH1PH2">
+            <result-entry utilization="0.27118" throughput="0.365472" squared-coeff-variation="1" proc-utilization="0.27118" throughput-bound="1.34771"/>
+            <entry-phase-activities>
+               <activity name="display_message" phase="1" host-demand-mean="0.742">
+                  <result-activity proc-waiting="0" service-time="0.742" utilization="0.27118" service-time-variance="0.550564"/>
                </activity>
             </entry-phase-activities>
          </entry>
