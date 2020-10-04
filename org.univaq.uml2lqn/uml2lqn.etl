@@ -23,7 +23,9 @@ rule Model2Schema
 	transform uml: UML!Model
 	to lqn: LQN!LqnModelType
 	{
-		guard: uml.name <> "PrimitiveTypes"
+		guard: uml.name <> "PrimitiveTypes" and uml.name <> "UML"
+		
+		uml.name.println("NAME --> ");
 		
 		lqn.name = uml.name;
 							
@@ -252,8 +254,37 @@ rule Message2Activity
 			var call = new LQN!ActivityMakingCallType;		
 			var lifeline = message.receiveEvent.covered;
 			
+			"^^^^^^^^^^".println();
+			message.println("Message --> ");
+			lifeline.println("Message lifeline --> ");
+			
+			lifeline.first.name.println("Lifeline first --> ");
+			
+			/*for(bs in BehaviorExecutionSpecification.all){
+				bs.name.println("BES name --> ");
+				bs.getCovereds.println("List of covered --> ");
+				bs.start.name.println("BES start --> ");
+				bs.start.isTypeOf(MessageOccurrenceSpecification).println("BES start type --> ");
+				bs.finish.name.println("BES finish --> ");
+				bs.finish.isTypeOf(MessageOccurrenceSpecification).println("BES finish type --> ");
+				"-----".println();
+			}*/
+			
+			
 			// Gets the BES starting with the message
 			var bes = lifeline.first.getElements("BehaviorExecutionSpecification");
+			bes.println("Lifeline first beses --> ");
+
+			
+			message.receiveEvent.getCovered().println("MOS_receive covered of Message --> ");
+			for(b in bes){
+				b.start.println("BES start --> ");
+				message.receiveEvent.println("Message receive --> ");
+				b.finish.println("BES finish --> ");
+			}
+			
+			"^^^^^^^^^^".println();
+
 
 			// Gets the target BES				
 			bes = bes.selectOne(i | i.start == message.receiveEvent and
