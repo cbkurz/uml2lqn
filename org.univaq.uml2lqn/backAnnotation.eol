@@ -6,12 +6,12 @@ for(scenario in scenarios)
 	scenario.annotate_scenario();
 
 // LQN Processors --> UML Nodes
-var xml_processors = LQXO!`t_processor`.all;
+var xml_processors = `t_processor`.all;
 for(element in xml_processors)
 	annotate_nodes(element);
 
 // LQN Activity --> UML Message
-var activities = LQXO!`t_activity`.all;
+var activities = `t_activity`.all;
 for(element in activities)
 	annotate_activity(element);
 
@@ -40,11 +40,6 @@ operation UML!UseCase annotate_scenario()
 operation annotate_nodes(proc)
 {	
 	proc.a_name.println();
-	
-	if(node_object.isUndefined()){
-		proc.a_name.println("[ERROR] Any node has name --> ");
-		throw "[ERROR] Any node has name --> " + proc.a_name;
-	}
 	
 	var node_object = UML!Node.all.selectOne(i | i.name = proc.a_name);
 	var stereotype = node_object.getAppliedStereotypes()
@@ -90,7 +85,7 @@ operation get_scenario_resptime(scenario : UML!UseCase)
 	var types = lifelines.represents.collect(i | i.getType().name);
 	
 	// Get all the reference task;
-	var reference_tasks = LQXO!`t_task`.all.select(i | i.`a_scheduling` == "ref" and types.includes(i.`a_name`));
+	var reference_tasks = `t_task`.all().select(i | i.`a_scheduling` == "ref" and types.includes(i.`a_name`));
 	
 	var entries = reference_tasks.getChildren("entry");
 	var entryPhases = entries.getChildren("entry-phase-activities");
