@@ -254,13 +254,13 @@ rule Message2Activity
 			var call = new LQN!ActivityMakingCallType;		
 			var lifeline = message.receiveEvent.covered;
 			
-			"^^^^^^^^^^".println();
+			/*"^^^^^^^^^^".println();
 			message.println("Message --> ");
 			lifeline.println("Message lifeline --> ");
 			
 			lifeline.first.name.println("Lifeline first --> ");
 			
-			/*for(bs in BehaviorExecutionSpecification.all){
+			for(bs in BehaviorExecutionSpecification.all){
 				bs.name.println("BES name --> ");
 				bs.getCovereds.println("List of covered --> ");
 				bs.start.name.println("BES start --> ");
@@ -273,9 +273,8 @@ rule Message2Activity
 			
 			// Gets the BES starting with the message
 			var bes = lifeline.first.getElements("BehaviorExecutionSpecification");
-			bes.println("Lifeline first beses --> ");
-
 			
+			/*bes.println("Lifeline first beses --> ");
 			message.receiveEvent.getCovered().println("MOS_receive covered of Message --> ");
 			for(b in bes){
 				b.start.println("BES start --> ");
@@ -283,7 +282,7 @@ rule Message2Activity
 				b.finish.println("BES finish --> ");
 			}
 			
-			"^^^^^^^^^^".println();
+			"^^^^^^^^^^".println();*/
 
 
 			// Gets the target BES				
