@@ -3,7 +3,7 @@ import "operations.eol";
 pre
 {
 	var modelMessages = UML!MessageOccurrenceSpecification.all();
-	"Begin Transformation...".println();
+	//"Begin Transformation...".println();
 }
 
 post
@@ -15,7 +15,7 @@ post
 	
 	// Checks if all the call are targeting an existing entry
 	callsCorrectness();
-	"Done!!".println();	
+	//"Done!!".println();	
 }
 
 
@@ -25,7 +25,7 @@ rule Model2Schema
 	{
 		guard: uml.name <> "PrimitiveTypes" and uml.name <> "UML"
 		
-		uml.name.println("NAME --> ");
+		//uml.name.println("NAME --> ");
 		
 		lqn.name = uml.name;
 							
@@ -56,8 +56,8 @@ operation callsCorrectness()
 {
 	for(call in LQN!MakingCallType)
 	{
-		LQN!EntryType.all().name.println("asd: ");
-		call.dest.println("dest:");
+		//LQN!EntryType.all().name.println("asd: ");
+		//call.dest.println("dest:");
 		if(not LQN!EntryType.all().name.includes(call.dest))
 			throw "Error: call " + call.dest + " to an undefined entry";
 	}
@@ -124,7 +124,7 @@ rule Node2Processor
 			return node.checkStereotypeApplication("GaExecHost") and components.notEmpty();
 		}
 			
-		node.name.println(" Node: ");
+		//node.name.println(" Node: ");
 
 		// GaExecHost stereotype object
 		var stereotype = node.checkAndGetStereotype("GaExecHost");
@@ -142,7 +142,7 @@ rule Node2Processor
 		
 		//components = components.select(i | i.isInteracting() and node.exclusiveDeployment(i));
 		components = components.select(i | i.isInteracting());	
-		components.name.println();
+		//components.name.println();
 
 		var sources = components.collect(i | i.getSources()).flatten;
 		

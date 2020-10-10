@@ -21,7 +21,7 @@ operation UML!UseCase annotate_scenario()
 	// Sets Response Time
 	var resptime = get_scenario_resptime(self);
 	
-	resptime.println();
+	//resptime.println();
 	
 	self.setValue(stereotype, "respT", Sequence{resptime.asString()});
 	
@@ -32,14 +32,14 @@ operation UML!UseCase annotate_scenario()
 	
 	self.setValue(stereotype, "throughput", Sequence{throughput.asString()});
 	
-	UML.store().println("Scenario: " + self.name + " ResponseTime: " +
-		resptime + " Throughput: " + throughput +  " Stored: ");
+	UML.store();//.println("Scenario: " + self.name + " ResponseTime: " +
+		//resptime + " Throughput: " + throughput +  " Stored: ");
 }
 
 // Adds utilization to nodes
 operation annotate_nodes(proc)
 {	
-	proc.a_name.println();
+	//proc.a_name.println();
 	
 	var node_object = UML!Node.all.selectOne(i | i.name = proc.a_name);
 	var stereotype = node_object.getAppliedStereotypes()
@@ -50,8 +50,8 @@ operation annotate_nodes(proc)
 			
 	node_object.setValue(stereotype, "utilization", utilization);
 
-	UML.store().println("Processor: " + proc.a_name + " Utilization: " +
-		utilization.first + " Stored: ");
+	UML.store();//.println("Processor: " + proc.a_name + " Utilization: " +
+		//utilization.first + " Stored: ");
 }
 
 // Adds service time to messages
@@ -70,8 +70,8 @@ operation annotate_activity(activity)
 	var service_time = results.`a_service-time`;
 	activity_object.setValue(stereotype, "respT", service_time);	
 	
-	UML.store().println("Activity: " + activity.a_name + " ServiceTime: " +
-		service_time.first + " Stored: ");
+	UML.store();//.println("Activity: " + activity.a_name + " ServiceTime: " +
+		//service_time.first + " Stored: ");
 }
 
 operation get_scenario_resptime(scenario : UML!UseCase)
