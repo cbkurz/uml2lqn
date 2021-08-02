@@ -1,16 +1,56 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <lqn-model name="automatedGuidedVehicle">
-  <processor multiplicity="2" name="VehicleController">
+  <processor multiplicity="1" name="VehicleController">
         
-    <task name="vehicle-control">
+    <task multiplicity="1" name="vehicle-control">
             
-      <entry name="control0_bes">
+      <entry name="move_bes">
                 
         <entry-phase-activities>
                     
           <activity host-demand-mean="0.159" name="start_motor_message" phase="1">
                         
-            <synch-call calls-mean="1.0" dest="motor0_bes"/>
+            <synch-call calls-mean="1.0" dest="start_motor_bes"/>
+                      
+          </activity>
+                  
+        </entry-phase-activities>
+              
+      </entry>
+            
+      <entry name="arrived_bes">
+                
+        <entry-phase-activities>
+                    
+          <activity host-demand-mean="0.96" name="stop_message" phase="1">
+                        
+            <synch-call calls-mean="1.0" dest="stop_motor_bes"/>
+                      
+          </activity>
+                    
+          <activity host-demand-mean="0.741" name="load_message" phase="1">
+                        
+            <synch-call calls-mean="1.0" dest="load_bes"/>
+                      
+          </activity>
+                  
+        </entry-phase-activities>
+              
+      </entry>
+            
+      <entry name="expired_bes">
+                
+        <entry-phase-activities>
+                    
+          <activity host-demand-mean="0.654" name="get_status_message" phase="1">
+                        
+            <synch-call calls-mean="1.0" dest="get_status_bes"/>
+                      
+          </activity>
+                    
+          <activity host-demand-mean="0.742" name="display_message" phase="1">
+                        
+            <synch-call calls-mean="1.0" dest="display_status_bes"/>
                       
           </activity>
                   
@@ -22,40 +62,13 @@
         
     <task name="SupervisorySystem" scheduling="ref">
             
-      <entry name="ss_bes">
+      <entry name="supervisor-system_bes">
                 
         <entry-phase-activities>
                     
           <activity host-demand-mean="0.423" name="move_message" phase="1">
                         
-            <synch-call calls-mean="1.0" dest="control0_bes"/>
-                      
-          </activity>
-                  
-        </entry-phase-activities>
-              
-      </entry>
-          
-    </task>
-      
-  </processor>
-  <processor multiplicity="1" name="ArrivalSensor">
-        
-    <task name="arrival-sensor">
-            
-      <entry name="">
-                
-        <entry-phase-activities>
-                    
-          <activity host-demand-mean="0.96" name="stop_message" phase="1">
-                        
-            <synch-call calls-mean="1.0" dest="motor1_bes"/>
-                      
-          </activity>
-                    
-          <activity host-demand-mean="0.741" name="load_message" phase="1">
-                        
-            <synch-call calls-mean="1.0" dest="arm_bes"/>
+            <synch-call calls-mean="1.0" dest="move_bes"/>
                       
           </activity>
                   
@@ -67,50 +80,13 @@
         
     <task name="ArrivalSensor" scheduling="ref">
             
-      <entry name="arrival_sensor_bes">
+      <entry name="arrival-sensor_bes">
                 
         <entry-phase-activities>
                     
           <activity host-demand-mean="0.5" name="arrived_message" phase="1">
                         
-            <synch-call calls-mean="1.0" dest=""/>
-                      
-          </activity>
-                  
-        </entry-phase-activities>
-              
-      </entry>
-          
-    </task>
-      
-  </processor>
-  <processor multiplicity="2" name="VehicleStatus">
-        
-    <task name="vehicle-status">
-            
-      <entry name="status_bes">
-                
-        <entry-phase-activities>
-                    
-          <activity host-demand-mean="0.654" name="get_status_message" phase="1"/>
-                  
-        </entry-phase-activities>
-              
-      </entry>
-            
-      <entry name="control2_bes">
-                
-        <entry-phase-activities>
-                    
-          <activity host-demand-mean="0.654" name="get_status_message" phase="1">
-                        
-            <synch-call calls-mean="1.0" dest="status_bes"/>
-                      
-          </activity>
-                    
-          <activity host-demand-mean="0.742" name="display_message" phase="1">
-                        
-            <synch-call calls-mean="1.0" dest="display_bes"/>
+            <synch-call calls-mean="1.0" dest="arrived_bes"/>
                       
           </activity>
                   
@@ -122,13 +98,13 @@
         
     <task name="Clock" scheduling="ref">
             
-      <entry name="clk_bes">
+      <entry name="clock_bes">
                 
         <entry-phase-activities>
                     
           <activity host-demand-mean="0.358" name="expired_message" phase="1">
                         
-            <synch-call calls-mean="1.0" dest="control2_bes"/>
+            <synch-call calls-mean="1.0" dest="expired_bes"/>
                       
           </activity>
                   
@@ -139,11 +115,45 @@
     </task>
       
   </processor>
+  <processor multiplicity="1" name="DisplaySystem">
+        
+    <task multiplicity="1" name="display-system">
+            
+      <entry name="display_status_bes">
+                
+        <entry-phase-activities>
+                    
+          <activity host-demand-mean="0.742" name="display_message" phase="1"/>
+                  
+        </entry-phase-activities>
+              
+      </entry>
+          
+    </task>
+      
+  </processor>
+  <processor multiplicity="2" name="VehicleStatus">
+        
+    <task multiplicity="1" name="vehicle-status">
+            
+      <entry name="get_status_bes">
+                
+        <entry-phase-activities>
+                    
+          <activity host-demand-mean="0.654" name="get_status_message" phase="1"/>
+                  
+        </entry-phase-activities>
+              
+      </entry>
+          
+    </task>
+      
+  </processor>
   <processor multiplicity="1" name="RobotArm">
         
-    <task name="robot-arm">
+    <task multiplicity="1" name="robot-arm">
             
-      <entry name="arm_bes">
+      <entry name="load_bes">
                 
         <entry-phase-activities>
                     
@@ -158,19 +168,9 @@
   </processor>
   <processor multiplicity="1" name="Motor">
         
-    <task name="motor">
+    <task multiplicity="1" name="motor">
             
-      <entry name="motor0_bes">
-                
-        <entry-phase-activities>
-                    
-          <activity host-demand-mean="0.159" name="start_motor_message" phase="1"/>
-                  
-        </entry-phase-activities>
-              
-      </entry>
-            
-      <entry name="motor1_bes">
+      <entry name="stop_motor_bes">
                 
         <entry-phase-activities>
                     
@@ -179,19 +179,12 @@
         </entry-phase-activities>
               
       </entry>
-          
-    </task>
-      
-  </processor>
-  <processor multiplicity="2" name="New-Node_azrnvharsl">
-        
-    <task name="New-Component_wrtqrjnmow">
             
-      <entry name="display_bes">
+      <entry name="start_motor_bes">
                 
         <entry-phase-activities>
                     
-          <activity host-demand-mean="0.742" name="display_message" phase="1"/>
+          <activity host-demand-mean="0.159" name="start_motor_message" phase="1"/>
                   
         </entry-phase-activities>
               
