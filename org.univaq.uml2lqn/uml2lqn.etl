@@ -3,7 +3,7 @@ import "operations.eol";
 pre
 {
 	var modelMessages = UML!MessageOccurrenceSpecification.all();
-	"Begin Transformation...".println();
+	//"Begin Transformation...".println();
 }
 
 // Operations to implement the replication of tasks
@@ -24,7 +24,6 @@ post
 	var processors = LQN!ProcessorType.all().select(i | i.task.isEmpty());
 	for(processor in processors)
 		LQN.deleteElement(processor);
-
 
 	/*		
 	for(processor in LQN!ProcessorType)
@@ -113,7 +112,6 @@ rule Node2Processor
 		var size = clones.size();
 		size = (size == 0) ? "1" else size.asString();	
 		
-		// If any, this branch collects the actors triggering the components on the current node 
 		var sources = components.collect(i | i.getSources()).flatten;
 		if(sources.notEmpty()) 
 			components.addAll(sources);
@@ -221,6 +219,23 @@ rule Message2Activity
 		{		
 			var call = new LQN!ActivityMakingCallType;		
 			var lifeline = message.receiveEvent.covered;
+			
+			/*"^^^^^^^^^^".println();
+			message.println("Message --> ");
+			lifeline.println("Message lifeline --> ");
+			
+			lifeline.first.name.println("Lifeline first --> ");
+			
+			for(bs in BehaviorExecutionSpecification.all){
+				bs.name.println("BES name --> ");
+				bs.getCovereds.println("List of covered --> ");
+				bs.start.name.println("BES start --> ");
+				bs.start.isTypeOf(MessageOccurrenceSpecification).println("BES start type --> ");
+				bs.finish.name.println("BES finish --> ");
+				bs.finish.isTypeOf(MessageOccurrenceSpecification).println("BES finish type --> ");
+				"-----".println();
+			}*/
+			
 			
 			// Gets the BES starting with the message
 			var bes = lifeline.first.getElements("BehaviorExecutionSpecification");
