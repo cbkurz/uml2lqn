@@ -209,7 +209,12 @@ rule Message2Activity
 		var stereotype = message.checkAndGetStereotype("GaStep");
 		var execTime = message.getValue(stereotype, "execTime").first;
 		var rep = message.getValue(stereotype, "rep");						
-		var hostDemandMean = execTime.asDouble() * rep.asDouble(); 
+		var hostDemandMean = "1.0";
+		
+		if(not execTime.isUndefined()) {
+    		// Calculates the service demand
+    		hostDemandMean = execTime.asDouble() * rep.asDouble(); 
+		}
 					
 		actv.name = message.name;
 		actv.phase = "1".asBigInteger();
