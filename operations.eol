@@ -61,7 +61,7 @@ operation UML!NamedElement getArtifacts(): Collection
 	{
 		var manifestation = artifact.manifestation;
 		manifestation = manifestation.select(i | i.supplier.first = self);
-		
+			
 		if(manifestation.notEmpty)
 			output.add(artifact);
 	}	
@@ -76,10 +76,10 @@ operation UML!NamedElement getArtifacts(): Collection
  */
 operation UML!NamedElement isInteracting(): Boolean
 {	
-	// Gets all the lifelines involving 'element'
+	// Gets all the lifelines involving the input 'element'
 	var lifelines = self.getLifelines();
-	var interacting = lifelines.select(i | i.isInteracting());
 	
+	var interacting = lifelines.select(i | i.isInteracting());
 	var artifacts = self.getArtifacts().flatten;
 	var deployments = artifacts.collect(i | i.getDeployments()).flatten;
 		
@@ -140,6 +140,7 @@ operation UML!Node exclusiveDeployment(component: UML!Component) : Boolean
 operation UML!Node getSpeedFactor()
 {
 	var stereotype = self.checkAndGetStereotype("GaExecHost");
+
 	return self.getValue(stereotype, "speedFactor");
 }
 
@@ -193,8 +194,6 @@ operation UML!Artifact getDeployments() : Sequence
 /*
  * Operations on UML!Lifeline; 
  */
-
-
 operation UML!Lifeline isInteracting(): Boolean
 {
 	return self.coveredBy.notEmpty();
@@ -271,6 +270,8 @@ operation UML!BehaviorExecutionSpecification isWellFormed() : Boolean
  */
 operation UML!BehaviorExecutionSpecification getMessages(): Collection
 {	
+
+	var modelMessages = UML!MessageOccurrenceSpecification.all();
 	var lifeline = self.covered.first;
 	var elements = lifeline.getElements("MessageOccurrenceSpecification");
 	elements = modelMessages.select(i | elements.includes(i));

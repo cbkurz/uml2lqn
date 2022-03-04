@@ -1,25 +1,107 @@
-import "operations.eol";
+//import "operations.eol";
 
-pre {
-	var gqam = UML!ProfileApplication.all
-		.collect(i | i.appliedProfile)
-		.selectOne(i | i.name = "GQAM");
-	var stereotypes = gqam.getOwnedStereotypes();
-	var gaexechost = stereotypes.select(i | i.name = "GaExecHost");
-	var gastep = stereotypes.select(i | i.name = "GaStep");
-	var gascenario = stereotypes.select(i | i.name = "GaScenario");	
+pre
+{
+	var modelMessages = UML!MessageOccurrenceSpecification.all();
+	"Begin Transformation...".println();
 }
 
-post {}
+operation LQN!TaskType getDestinations() : Sequence
+{
+	// Gets the activities of 'self'
+	var activities = self.entry.entryPhaseActivities.activity.flatten;
+	var calls = activities.synchCall.flatten;	
+	// dests is a collection of entries name called by 'self'
+	var destinations = calls.dest;
+	
+	var calledTasks = new Sequence();
+	var tasks = LQN!TaskType.all();
+		
+	for(task in tasks)
+	{
+		var entries = task.entry;	
+		// Checks if 'self' calls an entry of task	
+		if(entries.select(i | destinations.includes(i.name)).notEmpty())
+			calledTasks.add(task);
+	}
+		
+	return calledTasks;
+}
+
+post
+{
+	/**
+	 * The components deployed on several nodes should appear once on the final LQN.
+	 * Thus, when two nodes that are clones are identified, a component is moved and 
+     * the replication is incremented by 1.
+	 * This loops is necessary to remove clones (i.e., clones) remaning empty due 
+	 * to the relocation of components
+	 */
+	var processors = LQN!ProcessorType.all().select(i | i.task.isEmpty());
+	for(processor in processors)
+		LQN.deleteElement(processor);
+
+	for(processor in LQN!ProcessorType)
+	{
+		var tasks = processor.task;
+		for(task in tasks)
+			task.replication = processor.replication;
+	}
+	
+	// Sets the Fanout for replicated nodes 
+	for(task in LQN!TaskType)
+	{
+		var destinations = task.getDestinations();
+		var outputs = new Sequence();
+		var inputs = new Sequence();
+		
+		for(destination in destinations.select(i | i.replication > 1))
+		{
+			
+			var fanout = new LQN!FanOutType;
+			
+			fanout.dest = destination.name;
+			fanout.value = destination.replication;
+			
+			outputs.add(fanout);
+		}
+				
+		task.fanOut = outputs;
+
+		/** 
+		 * It shall not be required to set the fan-in, since a 
+		 * a task has always the same replication as the hosting Node
+
+		for(destination in destinations)
+		{
+			if(task.replication > 1)
+			{
+				var fanin = new LQN!FanInType;
+				
+				fanin.source = destination.name;
+				fanin.value = destination.replication;
+				
+				inputs.add(fanin);
+			}		
+		
+		}
+		task.fanIn = inputs;
+
+		**/
+	}
+	// Checks if all the call are targeting an existing entry
+	callsCorrectness();
+	"Done!!".println();	
+}
 
 rule Model2Schema 
 	transform uml: UML!Model
 	to lqn: LQN!LqnModelType
 	{
 		guard: uml.name <> "PrimitiveTypes"
-
-		lqn.name = uml.name;
-		lqn.processor ::= UML!Node.all();		
+		
+		lqn.name = uml.name;		
+		lqn.processor ::= UML!Node.all();
 	}
 
 rule Node2Processor
@@ -33,28 +115,50 @@ rule Node2Processor
          * - A <<GaExecHost>> Node deploying elements that are not interacting
 		 */
 		guard {
-			/* 
-			 * Gets the components deployed on this Node
-			 * Selects components interacting in a scenario
-			 */
-			var components = node.getDeployed().select(i | i.isInteracting());
-			/* 
-			 * The transformation considers nodes stereotyped with 
-		     * <<GaExecHost>> and deploying interacting components
-             */
-			return node.getAppliedStereotypes()
-				.exists(i|i.name = "GaExecHost") and components.notEmpty();
+			// Gets the components deployed on this Node
+			var components = node.getDeployed();
+			
+			// Selects components involved in a scenario
+			components = components.select(i | i.isInteracting());
+
+			// Considers nodes stereotyped with GaExecHost and deploying interacting components
+			return node.checkStereotypeApplication("GaExecHost") and components.notEmpty();
 		}
-
+		
+		var stereotype = node.checkAndGetStereotype("GaExecHost");
 		var speedFactor = node.getSpeedFactor();
-		/* 
-		 * Retrieves the components deployed on the current node 
-		 * and interacting in a scenario
+		// Retrieves the components deployed on the current node
+		var components = node.getDeployed();
+		components = components.select(i | i.isInteracting());
+		
+		/*
+		 * Selects the components deployed on multiple nodes (i.e., not exclusiveDeployment);
+		 * The set of deployments includes the current node (i.e, variable node);
 		 */
-		var components = node.getDeployed().select(i | i.isInteracting());
-
+		var multideployed = components.select(i | not node.exclusiveDeployment(i));
+		
+		/*
+		 * Collects the deployments of multideployed nodes
+		 * The transformation identifies a clone when a component is deployed
+		 * on nodes with the same speed factor
+  		 */
+		var clones = multideployed.collect(i | i.getNodes()).flatten;
+		// clones = clones.select(i | i.getSpeedFactor() == speedFactor and i.id != node.id);
+		clones = clones.select(i | i.getSpeedFactor() == speedFactor);
+			
+		// The number of clones
+		var size = clones.size();
+		size = (size == 0) ? "1" else size.asString();	
+		
+		// If any, this branch collects the actors triggering the components on the current node 
+		var sources = components.collect(i | i.getSources()).flatten;
+		if(sources.notEmpty()) 
+			components.addAll(sources);
+			
 		proc.name = node.name;
 		proc.task ::= components;
+		proc.multiplicity = size.asBigInteger();
+		// proc.replication = size.asBigInteger();
 	}
 	
 rule Actor2Task
@@ -67,9 +171,15 @@ rule Actor2Task
 		var beses = lifelines.collect(
 			i | i.getElements("BehaviorExecutionSpecification")
 		).flatten;
+		var stereotype = actor.getAppliedStereotypes();
+		var pattern = actor.getValue(stereotype.first, "pattern");
+		
+		if(pattern.isUndefined())
+			pattern = "1";
 
 		task.name = actor.name;
 		task.scheduling = LQN!TaskSchedulingType#ref;
+		task.multiplicity = pattern;
 		task.entry ::= beses;
 	}
 
