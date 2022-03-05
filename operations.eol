@@ -71,7 +71,7 @@ operation UML!NamedElement getArtifacts(): Collection
 
 /**
  * Checks if it exists a behavioral description involving self
- * @param element: UML!Component under investigation
+ * @param element: element under investigation
  * @return a boolean
  */
 operation UML!NamedElement isInteracting(): Boolean

@@ -4,10 +4,15 @@ pre {
 	var gqam = UML!ProfileApplication.all
 		.collect(i | i.appliedProfile)
 		.selectOne(i | i.name = "GQAM");
+		
+	gqam.println("gqam: ");
+
 	var stereotypes = gqam.getOwnedStereotypes();
-	var gaexechost = stereotypes.select(i | i.name = "GaExecHost");
-	var gastep = stereotypes.select(i | i.name = "GaStep");
-	var gascenario = stereotypes.select(i | i.name = "GaScenario");	
+	var gaexechost = stereotypes.selectOne(i | i.name = "GaExecHost");
+	var gastep = stereotypes.selectOne(i | i.name = "GaStep");
+	var gascenario = stereotypes.selectOne(i | i.name = "GaScenario");
+	
+	var deployment = UML!Package.all.selectOne(i | i.name = "deployment_view");
 }
 
 post {}
@@ -17,9 +22,10 @@ rule Model2Schema
 	to lqn: LQN!LqnModelType
 	{
 		guard: uml.name <> "PrimitiveTypes"
+		var nodes = UML!Node.all();
 
 		lqn.name = uml.name;
-		lqn.processor ::= UML!Node.all();		
+		lqn.processor ::= nodes;
 	}
 
 rule Node2Processor
@@ -45,7 +51,6 @@ rule Node2Processor
 			return node.getAppliedStereotypes()
 				.exists(i|i.name = "GaExecHost") and components.notEmpty();
 		}
-
 		var speedFactor = node.getSpeedFactor();
 		/* 
 		 * Retrieves the components deployed on the current node 
@@ -61,7 +66,7 @@ rule Actor2Task
 	transform actor: UML!Actor
 	to task: LQN!TaskType
 	{
-		guard: actor.isInteracting()
+		// guard: actor.isInteracting()
 		
 		var lifelines = actor.getLifelines();
 		var beses = lifelines.collect(
@@ -72,7 +77,7 @@ rule Actor2Task
 		task.scheduling = LQN!TaskSchedulingType#ref;
 		task.entry ::= beses;
 	}
-
+	
 rule Component2Task
 	transform component: UML!Component
 	to task: LQN!TaskType
@@ -129,8 +134,7 @@ rule BES2Entry
 		var lifeline = bes.covered.first;
 		var type = lifeline.represents.type;
 		type.println("type: --> ");
-		
-		
+
 		var messages = bes.getMessages();
 		// Gets only the messages that are sent
 		messages = messages.select(i | i.isSend() and i.message.messageSort <> UML!MessageSort#reply);	
