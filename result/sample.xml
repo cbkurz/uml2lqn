@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lqn-model name="sample">
+  <processor name="node1">
+    <task multiplicity="1" name="b">
+      <entry name="b_bes_2">
+        <entry-phase-activities>
+          <activity host-demand-mean="1.5" name="op2_message" phase="1"/>
+        </entry-phase-activities>
+      </entry>
+      <entry name="b_bes_0">
+        <entry-phase-activities>
+          <activity host-demand-mean="1.5" name="op1" phase="1"/>
+        </entry-phase-activities>
+      </entry>
+    </task>
+  </processor>
+  <processor name="node2">
+    <task multiplicity="1" name="a">
+      <entry name="a_bes">
+        <entry-phase-activities>
+          <activity host-demand-mean="1.5" name="op3_message" phase="1"/>
+        </entry-phase-activities>
+      </entry>
+    </task>
+  </processor>
+  <processor name="actor1">
+    <task multiplicity="1" name="ass1" scheduling="ref">
+      <entry name="actor1_bes">
+        <entry-phase-activities>
+          <activity host-demand-mean="1.5" name="op1" phase="1">
+            <asynch-call dest="b_bes_0" calls-mean="1.0"/>
+          </activity>
+          <activity host-demand-mean="1.5" name="op2_message" phase="1">
+            <asynch-call dest="b_bes_2" calls-mean="1.0"/>
+          </activity>
+        </entry-phase-activities>
+      </entry>
+    </task>
+    <task name="ass2">
+      <entry name="act_case2_bes" open-arrival-rate="0.1">
+        <entry-phase-activities>
+          <activity host-demand-mean="1.5" name="op3_message" phase="1">
+            <asynch-call dest="a_bes" calls-mean="1.0"/>
+          </activity>
+        </entry-phase-activities>
+      </entry>
+    </task>
+  </processor>
+</lqn-model>
