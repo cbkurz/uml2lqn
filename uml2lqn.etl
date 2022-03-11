@@ -20,12 +20,13 @@ rule Model2Schema
 	to lqn: LQN!LqnModelType
 	{
 		guard: uml.name <> "PrimitiveTypes"
-		// Nodes and actors have a corresponding processor
-		var nodes = UML!Node.all();
-		nodes.addAll(UML!Actor.all());
+		// Retrieves the nodes and the actor to convert to processors
+		var nodes = UML!Node.all.equivalent();
+		var actors = UML!Actor.all.equivalent("Actor2Processor");
 
 		lqn.name = uml.name;
-		lqn.processor ::= nodes;
+		lqn.processor.addAll(nodes);
+		lqn.processor.addAll(actors);
 	}
 
 rule Node2Processor
@@ -66,52 +67,54 @@ rule Actor2Processor
 	transform actor: UML!Actor
 	to proc: LQN!ProcessorType
 	{
-		guard: actor.isInteracting()
+		guard {
+			var lifelines = UML!Lifeline.all().select(
+				i | i.represents.type = actor
+			);
+
+			// an actor is trasformed if interacts and has a sigle lifeline
+			return actor.isInteracting() and lifelines.size() = 1;
+		}
+		var task = actor.equivalent("Actor2Task");
+
 		proc.name = actor.name;
-		proc.task ::= actor.getAssociations();
+		proc.task.add(task);
 	}
-	
-rule Associations2Task
-	transform asc: UML!Association
+
+rule Actor2Task
+	transform actor: UML!Actor
 	to task: LQN!TaskType
 	{
-		guard: asc.isStereotypeApplied(gaworkload)
-		
-		var members = asc.getEndTypes();
-		var actor = members.selectOne(i | i.eClass.name = "Actor");
-		var usecase = members.selectOne(i | i.eClass.name = "UseCase");
+		guard {
+			return UML!Lifeline.all.select(
+				i | i.represents.type = actor
+			).first.isStereotypeApplied(gaworkload);
+		}
 
-		var pattern = asc.getValue(gaworkload, "pattern").trim();
-		var reg = '(closed|open):[0-9]+(.[0-9]+)?';
+		var lifeline = UML!Lifeline.all().select(
+				i | i.represents.type = actor
+		).first;
 
-		if(not pattern.matches(reg))
-			throw "value not recognized GaWorkloadEvent::pattern at " + asc.name;
-			
-		var mode = pattern.split(":");
-
-		var lifelines = UML!Lifeline.all.select(
-			i | usecase.getOwnedElements().includes(i.getOwner) 
-				and i.getRepresents().type = actor
-		);
-		
-		var beses = lifelines.collect(
+		var beses = lifeline.collect(
 			i | i.getElements("BehaviorExecutionSpecification")
 		).flatten;
 		
-		task.name = actor.name + "_" + asc.name;
+		var workload = lifeline.getWorkload();
+
+		task.name = actor.name;
 		task.entry ::= beses;
-		
-		if(mode[0] = "closed")
+
+		if(workload[0] = "closed")
 		{
 			task.scheduling = LQN!TaskSchedulingType#ref;
-			task.multiplicity = mode[1];
+			task.multiplicity = workload[1];
 		}else
 		{
 			for(entry in task.entry)
-				entry.openArrivalRate = mode[1];
+				entry.openArrivalRate = workload[1];
 		}
 	}
-	
+
 rule Component2Task
 	transform component: UML!Component
 	to task: LQN!TaskType
@@ -160,10 +163,8 @@ rule BES2Entry
 			if(not (bes.isWellFormed()))
 				return false;
 			// A BES should belong to a single and existing Lifeline
-			var lifeline = bes.covered.first;
-			return lifeline.isDefined();
+			return bes.covered.first.isDefined();
 		}
-
 		var messages = bes.getMessages();
 		// Gets only the messages that are sent
 		messages = messages.select(
@@ -175,7 +176,8 @@ rule BES2Entry
 	
 		entry.name = bes.name;					
 		entry.entryPhaseActivities = new LQN!PhaseActivities;
-		entry.entryPhaseActivities.activity ::= messages;
+		entry.entryPhaseActivities.activity =
+			messages.equivalent("Message2Activity");
 	}
 	
 
@@ -187,9 +189,7 @@ rule Message2Activity
 		guard: msgo.message.getAppliedStereotypes()
 			.exists(i|i.name = "GaStep")
 
-		var message = msgo.message;		
-		// Gets the values of the GaStep tags	
-		var rep = message.getValue(gastep, "rep");
+		var message = msgo.message;	
 		var execTime = message.getValue(gastep, "execTime").first;
 		var hostDemandMean = "1.0";
 
@@ -197,24 +197,34 @@ rule Message2Activity
 			// Calculates the service demand
 			hostDemandMean = execTime.asDouble() * rep.asDouble();
 
-		actv.name = message.name;
-		actv.phase = "1".asBigInteger();
-		actv.hostDemandMean = hostDemandMean;
+		msgo.name.println("msgo: ");
+		msgo.message.println("message: ");
+		var call = msgo.equivalent("Message2Request");
+		
+		call.println("call: ");
 
-		// Creates the LQN activity and synch-call tag to the destionation UML!BES
-		if(msgo.isSend())
-		{		
-			var call = new LQN!ActivityMakingCallType;		
-			var lifeline = message.receiveEvent.covered;
-			
-			// Gets the BES starting with the message
-			var bes = lifeline.first.getElements("BehaviorExecutionSpecification");
-			// Gets the target BES
-			bes = bes.selectOne(i | i.start == message.receiveEvent and
-				i.finish.isTypeOf(MessageOccurrenceSpecification));
-	
-			call.dest = bes.name;
-			call.callsMean = rep;
-			actv.synchCall = Sequence{call};
-		}
+		//actv.name = message.name;
+		//actv.phase = "1".asBigInteger();
+		//actv.hostDemandMean = hostDemandMean;
+
+		//actv.synchCall = Sequence{call};
+	}
+
+rule Message2Request
+	transform msgo: UML!MessageOccurrenceSpecification
+	to call: LQN!ActivityMakingCallType
+	{
+		guard: msgo.isSend()
+
+		var message = msgo.message;
+		//ar rep = message.getValue(gastep, "rep");
+		var lifeline = message.receiveEvent.covered;
+		var bes = lifeline.first.getElements("BehaviorExecutionSpecification");
+
+		// Gets the target BES
+		bes = bes.selectOne(i | i.start == message.receiveEvent and
+			i.finish.isTypeOf(MessageOccurrenceSpecification));
+
+		call.dest = bes.name;
+		//call.callsMean = rep;
 	}
