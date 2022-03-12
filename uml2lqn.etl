@@ -86,14 +86,14 @@ rule Actor2Task
 	to task: LQN!TaskType
 	{
 		guard {
-			return UML!Lifeline.all.select(
-				i | i.represents.type = actor
-			).first.isStereotypeApplied(gaworkload);
+			var lifeline = 
+				UML!Lifeline.all.selectOne(i | i.represents.type = actor);
+
+			return lifeline.isDefined() and lifeline.isStereotypeApplied(gaworkload);
 		}
 
-		var lifeline = UML!Lifeline.all().select(
-				i | i.represents.type = actor
-		).first;
+		var lifeline = UML!Lifeline.all().selectOne(
+				i | i.represents.type = actor);
 
 		var beses = lifeline.collect(
 			i | i.getElements("BehaviorExecutionSpecification")
@@ -180,7 +180,7 @@ rule BES2Entry
 			messages.equivalent("Message2Activity");
 	}
 	
-
+@lazy
 rule Message2Activity
 	transform msgo: UML!MessageOccurrenceSpecification
 	to actv: LQN!ActivityPhasesType
@@ -194,37 +194,36 @@ rule Message2Activity
 		var hostDemandMean = "1.0";
 
 		if(execTime.isDefined())
-			// Calculates the service demand
 			hostDemandMean = execTime.asDouble() * rep.asDouble();
 
-		msgo.name.println("msgo: ");
-		msgo.message.println("message: ");
 		var call = msgo.equivalent("Message2Request");
-		
-		call.println("call: ");
-
-		//actv.name = message.name;
-		//actv.phase = "1".asBigInteger();
-		//actv.hostDemandMean = hostDemandMean;
-
-		//actv.synchCall = Sequence{call};
+		if(call.isDefined())
+			actv.synchCall = Sequence{call};		
+	
+		actv.name = message.name;
+		actv.phase = "1".asBigInteger();
+		actv.hostDemandMean = hostDemandMean;
 	}
-
+	
+@lazy	
 rule Message2Request
 	transform msgo: UML!MessageOccurrenceSpecification
 	to call: LQN!ActivityMakingCallType
 	{
 		guard: msgo.isSend()
-
+		
 		var message = msgo.message;
-		//ar rep = message.getValue(gastep, "rep");
-		var lifeline = message.receiveEvent.covered;
-		var bes = lifeline.first.getElements("BehaviorExecutionSpecification");
+		var rep = message.getValue(gastep, "rep");
 
+		var lifeline = message.receiveEvent.covered;
+		// Gets the BES starting with the message
+		var bes = lifeline.first.getElements("BehaviorExecutionSpecification");
 		// Gets the target BES
 		bes = bes.selectOne(i | i.start == message.receiveEvent and
 			i.finish.isTypeOf(MessageOccurrenceSpecification));
-
+	
 		call.dest = bes.name;
-		//call.callsMean = rep;
+		call.callsMean = rep;
 	}
+	
+	
