@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:GQAM="http://www.eclipse.org/papyrus/GQAM/1" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xsi:schemaLocation="http://www.eclipse.org/papyrus/GQAM/1 http://www.eclipse.org/papyrus/MARTE/1#//GQAM">
+  <uml:Model xmi:id="eee_1045467100313_135436_1" name="sample" visibility="public" URI="" viewpoint="">
+    <packagedElement xmi:type="uml:Package" xmi:id="_19_0_4_6590219_1635339355871_966274_4797" name="static_view" visibility="public" URI="">
+      <packagedElement xmi:type="uml:Component" xmi:id="_19_0_4_6590219_1635339583833_497649_4989" name="b" visibility="public">
+        <interfaceRealization xmi:type="uml:InterfaceRealization" xmi:id="_19_0_4_6590219_1635495765323_252687_5094" name="" visibility="public" client="_19_0_4_6590219_1635339583833_497649_4989" supplier="_19_0_4_6590219_1635495759077_845663_5071" contract="_19_0_4_6590219_1635495759077_845663_5071"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_19_0_4_6590219_1635406112833_898481_4829" name="op1" visibility="public"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_19_0_4_6590219_1645635018215_638049_4890" name="op2" visibility="public"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Component" xmi:id="_19_0_4_6590219_1635495736683_708017_5011" name="a" visibility="public">
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_19_0_4_6590219_1635495816759_313542_5149" name="temp1_message" visibility="public"/>
+        <ownedOperation xmi:type="uml:Operation" xmi:id="_19_0_4_6590219_1646732817200_534803_5798" name="op3" visibility="public"/>
+        <packagedElement xmi:type="uml:Usage" xmi:id="_19_0_4_6590219_1635495769665_718863_5097" name="" visibility="public" client="_19_0_4_6590219_1635495736683_708017_5011" supplier="_19_0_4_6590219_1635495759077_845663_5071"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Interface" xmi:id="_19_0_4_6590219_1635495759077_845663_5071" name="if" visibility="public"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_19_0_4_6590219_1635339368482_782452_4799" name="dynamic_view" visibility="public" URI="">
+      <packagedElement xmi:type="uml:UseCase" xmi:id="_19_0_4_6590219_1635339397998_57987_4835" name="case1" visibility="public" classifierBehavior="_19_0_4_6590219_1635339424663_803834_4885">
+        <ownedBehavior xmi:type="uml:Interaction" xmi:id="_19_0_4_6590219_1635339424663_803834_4885" name="case1" visibility="public" isReentrant="true">
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_19_0_4_6590219_1635339429071_863064_4933" name="b" visibility="private" type="_19_0_4_6590219_1635339583833_497649_4989"/>
+          <ownedAttribute xmi:type="uml:Property" xmi:id="_19_0_4_6590219_1635339436358_929541_4956" name="actor1" type="_19_0_4_6590219_1635339404420_427611_4850"/>
+          <lifeline xmi:type="uml:Lifeline" xmi:id="_19_0_4_6590219_1635339429070_143738_4932" name="b_lifeline" visibility="public" represents="_19_0_4_6590219_1635339429071_863064_4933" coveredBy="_19_0_4_6590219_1645634992294_219615_4874 _19_0_4_6590219_1645634992321_553449_4880 _19_0_4_6590219_1645635010660_102827_4884 _19_0_4_6590219_1635341009500_749919_5084 _19_0_4_6590219_1635339446344_4504_4971 _19_0_4_6590219_1635339552744_599565_4980"/>
+          <lifeline xmi:type="uml:Lifeline" xmi:id="_19_0_4_6590219_1635339436354_866053_4955" name="act1_case1" visibility="public" represents="_19_0_4_6590219_1635339436358_929541_4956" coveredBy="_19_0_4_6590219_1635341009502_776413_5085 _19_0_4_6590219_1635339446343_437832_4970 _19_0_4_6590219_1635339552745_659824_4981 _19_0_4_6590219_1645634992292_893844_4873 _19_0_4_6590219_1645635010662_588604_4885"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_19_0_4_6590219_1635339446343_437832_4970" name="op1_send" visibility="public" covered="_19_0_4_6590219_1635339436354_866053_4955" message="_19_0_4_6590219_1635339446340_200213_4969"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_19_0_4_6590219_1635339446344_4504_4971" name="op1_receive" visibility="public" covered="_19_0_4_6590219_1635339429070_143738_4932" message="_19_0_4_6590219_1635339446340_200213_4969"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_19_0_4_6590219_1635339552744_599565_4980" name="ack_send" visibility="public" covered="_19_0_4_6590219_1635339429070_143738_4932" message="_19_0_4_6590219_1635339552742_630421_4979"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_19_0_4_6590219_1635339552745_659824_4981" name="ack_receive" visibility="public" covered="_19_0_4_6590219_1635339436354_866053_4955" message="_19_0_4_6590219_1635339552742_630421_4979"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_19_0_4_6590219_1645634992292_893844_4873" name="op2_send" visibility="public" covered="_19_0_4_6590219_1635339436354_866053_4955" message="_19_0_4_6590219_1645634992287_195745_4872"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_19_0_4_6590219_1645634992294_219615_4874" name="op2_receive" visibility="public" covered="_19_0_4_6590219_1635339429070_143738_4932" message="_19_0_4_6590219_1645634992287_195745_4872"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_19_0_4_6590219_1645635010660_102827_4884" name="ack1_send" visibility="public" covered="_19_0_4_6590219_1635339429070_143738_4932" message="_19_0_4_6590219_1645635010657_901871_4883"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_19_0_4_6590219_1645635010662_588604_4885" name="ack1_receive" visibility="public" covered="_19_0_4_6590219_1635339436354_866053_4955" message="_19_0_4_6590219_1645635010657_901871_4883"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_19_0_4_6590219_1635341009500_749919_5084" name="b_bes_0" visibility="public" covered="_19_0_4_6590219_1635339429070_143738_4932" finish="_19_0_4_6590219_1635339552744_599565_4980" start="_19_0_4_6590219_1635339446344_4504_4971"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_19_0_4_6590219_1635341009502_776413_5085" name="actor1_bes" visibility="public" covered="_19_0_4_6590219_1635339436354_866053_4955" finish="_19_0_4_6590219_1645635010662_588604_4885" start="_19_0_4_6590219_1635339446343_437832_4970"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_19_0_4_6590219_1645634992321_553449_4880" name="b_bes_2" visibility="public" covered="_19_0_4_6590219_1635339429070_143738_4932" finish="_19_0_4_6590219_1645635010660_102827_4884" start="_19_0_4_6590219_1645634992294_219615_4874"/>
+          <message xmi:type="uml:Message" xmi:id="_19_0_4_6590219_1635339446340_200213_4969" name="op1" visibility="public" messageSort="asynchCall" receiveEvent="_19_0_4_6590219_1635339446344_4504_4971" sendEvent="_19_0_4_6590219_1635339446343_437832_4970" signature="_19_0_4_6590219_1635406112833_898481_4829"/>
+          <message xmi:type="uml:Message" xmi:id="_19_0_4_6590219_1635339552742_630421_4979" name="ack" visibility="public" messageSort="reply" receiveEvent="_19_0_4_6590219_1635339552745_659824_4981" sendEvent="_19_0_4_6590219_1635339552744_599565_4980"/>
+          <message xmi:type="uml:Message" xmi:id="_19_0_4_6590219_1645634992287_195745_4872" name="op2_message" visibility="public" messageSort="asynchCall" receiveEvent="_19_0_4_6590219_1645634992294_219615_4874" sendEvent="_19_0_4_6590219_1645634992292_893844_4873" signature="_19_0_4_6590219_1645635018215_638049_4890"/>
+          <message xmi:type="uml:Message" xmi:id="_19_0_4_6590219_1645635010657_901871_4883" name="ack1" visibility="public" messageSort="reply" receiveEvent="_19_0_4_6590219_1645635010662_588604_4885" sendEvent="_19_0_4_6590219_1645635010660_102827_4884"/>
+        </ownedBehavior>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Actor" xmi:id="_19_0_4_6590219_1635339404420_427611_4850" name="actor1" visibility="public"/>
+      <packagedElement xmi:type="uml:Association" xmi:id="_19_0_4_6590219_1635339406038_597174_4874" name="ass1" visibility="public" memberEnd="_19_0_4_6590219_1635339406038_450388_4875 _19_0_4_6590219_1635339406039_808407_4876" navigableOwnedEnd="_19_0_4_6590219_1635339406038_450388_4875 _19_0_4_6590219_1635339406039_808407_4876">
+        <ownedEnd xmi:type="uml:Property" xmi:id="_19_0_4_6590219_1635339406038_450388_4875" name="" visibility="private" type="_19_0_4_6590219_1635339397998_57987_4835" association="_19_0_4_6590219_1635339406038_597174_4874"/>
+        <ownedEnd xmi:type="uml:Property" xmi:id="_19_0_4_6590219_1635339406039_808407_4876" name="" visibility="private" type="_19_0_4_6590219_1635339404420_427611_4850" association="_19_0_4_6590219_1635339406038_597174_4874"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" xmi:id="_19_0_4_6590219_1635339378371_221640_4800" name="deployment_view" visibility="public" URI="">
+      <packagedElement xmi:type="uml:Node" xmi:id="_19_0_4_6590219_1635339607020_102854_5033" name="node1" visibility="public">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_19_0_4_6590219_1635495913138_224761_5204" name="" visibility="private" type="_19_0_4_6590219_1635495587396_403840_4978" association="_19_0_4_6590219_1635495913138_534466_5202">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_19_0_4_6590219_1635495921349_636064_5215" name="" visibility="public" value="1"/>
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_19_0_4_6590219_1635495921350_219723_5216" name="" visibility="public" value="1"/>
+        </ownedAttribute>
+        <deployment xmi:type="uml:Deployment" xmi:id="_19_0_4_6590219_1635339614466_899422_5062" name="" visibility="public" client="_19_0_4_6590219_1635339607020_102854_5033" supplier="_19_0_4_6590219_1635339614463_964731_5061" deployedArtifact="_19_0_4_6590219_1635339614463_964731_5061"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Artifact" xmi:id="_19_0_4_6590219_1635339614463_964731_5061" name="b" visibility="public" fileName="">
+        <manifestation xmi:type="uml:Manifestation" xmi:id="_19_0_4_6590219_1635339628181_301516_5082" name="" visibility="public" client="_19_0_4_6590219_1635339614463_964731_5061" supplier="_19_0_4_6590219_1635339583833_497649_4989" utilizedElement="_19_0_4_6590219_1635339583833_497649_4989"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Node" xmi:id="_19_0_4_6590219_1635495587396_403840_4978" name="node2" visibility="public">
+        <ownedAttribute xmi:type="uml:Property" xmi:id="_19_0_4_6590219_1635495913138_622782_5203" name="" visibility="private" type="_19_0_4_6590219_1635339607020_102854_5033" association="_19_0_4_6590219_1635495913138_534466_5202">
+          <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_19_0_4_6590219_1635495918450_931562_5211" name="" visibility="public" value="1"/>
+          <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_19_0_4_6590219_1635495918450_429070_5212" name="" visibility="public" value="1"/>
+        </ownedAttribute>
+        <deployment xmi:type="uml:Deployment" xmi:id="_19_0_4_6590219_1635495903278_735270_5197" name="" visibility="public" client="_19_0_4_6590219_1635495587396_403840_4978" supplier="_19_0_4_6590219_1635495883194_997610_5150" deployedArtifact="_19_0_4_6590219_1635495883194_997610_5150"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Artifact" xmi:id="_19_0_4_6590219_1635495883194_997610_5150" name="a" visibility="public" fileName="">
+        <manifestation xmi:type="uml:Manifestation" xmi:id="_19_0_4_6590219_1635495894709_273342_5151" name="" visibility="public" client="_19_0_4_6590219_1635495883194_997610_5150" supplier="_19_0_4_6590219_1635495736683_708017_5011" utilizedElement="_19_0_4_6590219_1635495736683_708017_5011"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:CommunicationPath" xmi:id="_19_0_4_6590219_1635495913138_534466_5202" name="" visibility="public" memberEnd="_19_0_4_6590219_1635495913138_622782_5203 _19_0_4_6590219_1635495913138_224761_5204"/>
+    </packagedElement>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_aU9bMJ7PEeyN1cRLnOEdug">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_aU-CQJ7PEeyN1cRLnOEdug" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://www.eclipse.org/papyrus/MARTE/1#//GQAM"/>
+      </eAnnotations>
+      <appliedProfile xmi:type="uml:Profile" href="pathmap://Papyrus_PROFILES/MARTE.profile.uml#_4bV20APMEdyuUt-4qHuVvQ"/>
+    </profileApplication>
+  </uml:Model>
+  <GQAM:GaExecHost xmi:id="_cHMN0J7PEeyN1cRLnOEdug" base_Classifier="_19_0_4_6590219_1635339607020_102854_5033"/>
+  <GQAM:GaExecHost xmi:id="_dJNrgJ7PEeyN1cRLnOEdug" base_Classifier="_19_0_4_6590219_1635495587396_403840_4978"/>
+  <GQAM:GaScenario xmi:id="_esbKsJ7PEeyN1cRLnOEdug" base_NamedElement="_19_0_4_6590219_1635339397998_57987_4835"/>
+  <GQAM:GaStep xmi:id="_uRrBQJ7PEeyN1cRLnOEdug" base_NamedElement="_19_0_4_6590219_1645634992287_195745_4872" base_Message="_19_0_4_6590219_1645634992287_195745_4872"/>
+  <GQAM:GaStep xmi:id="_vFaLUJ7PEeyN1cRLnOEdug" base_NamedElement="_19_0_4_6590219_1635339446340_200213_4969" base_Message="_19_0_4_6590219_1635339446340_200213_4969"/>
+  <GQAM:GaWorkloadEvent xmi:id="_c6TQUJ7QEeyN1cRLnOEdug" pattern="closed:3" base_NamedElement="_19_0_4_6590219_1635339406038_597174_4874"/>
+  <GQAM:GaWorkloadEvent xmi:id="_w8owgKExEey6p81o-jVFHQ" pattern="closed:2" base_NamedElement="_19_0_4_6590219_1635339436354_866053_4955"/>
+</xmi:XMI>

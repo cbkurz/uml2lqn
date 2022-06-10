@@ -2,16 +2,19 @@
 <project name="UML_2_LQN" basedir="." default="LoadModels"> 
 	<target name="LoadModels">
 		<epsilon.emf.loadModel name="UML" modelFile="${input}/${name}.uml" 
-			metamodelUri="http://www.eclipse.org/uml2/5.0.0/UML" read="true" store="false"/>	
+			metamodelUri="http://www.eclipse.org/uml2/5.0.0/UML" read="true" store="false"/>
+		
+		<epsilon.emf.loadRegisteredMetamodel name="GQAM"
+			metamodelUri="http://www.eclipse.org/papyrus/GQAM/1"/>
 		
 		<epsilon.emf.loadXmlModel name="LQN" modelFile="${output}/${name}.xml" 
-			xsdFile="lqnxsd/lqn.xsd" read="false" store="true"/>	
-		
+			xsdFile="lqnxsd/lqn.xsd" read="false" store="true"/>
+
 		<epsilon.etl src="uml2lqn.etl">
 			<model ref="UML"/>
 			<model ref="LQN"/>
 		</epsilon.etl>
-		
+
 		<epsilon.storeModel model="LQN"/>	
 	</target>
 	

@@ -2,11 +2,13 @@ import "operations.eol";
 
 // Annotates all the UML!UseCase stereotyped with GaScenario
 var scenarios = UML!UseCase.all().select(i | i.checkStereotypeApplication("GaScenario"));
+
 for(scenario in scenarios)
 	scenario.annotateScenario();
-	
+
 // Annotates all the UML!Node stereotyped with GaExecHost
 var processors = UML!Node.all().select(i | i.checkStereotypeApplication("GaExecHost"));
+
 for(processor in processors)
 	processor.annotateNode();
 
@@ -47,7 +49,9 @@ operation UML!UseCase getScenarioRespTime()
 	var types = lifelines.represents.collect(i | i.getType().name);
 	
 	// Gets all the reference tasks
-	var referenceTasks = LQXO!`t_task`.all().select(i | i.`a_scheduling` == "ref" and types.includes(i.`a_name`));	
+	//var referenceTasks = `t_task`.all().select(i | i.`a_scheduling` == "ref" and types.includes(i.`a_name`));
+ 	
+ 	var referenceTasks = LQXO!`t_task`.all().select(i | i.`a_scheduling` == "ref" and types.includes(i.`a_name`));	
 	var entries = referenceTasks.getChildren("entry");
 	var entryPhases = entries.getChildren("entry-phase-activities");
 		
@@ -66,20 +70,25 @@ operation UML!UseCase getScenarioRespTime()
  */
 operation UML!UseCase annotateScenario()
 {
+	self.name.println();
 	var stereotype = self.getAppliedStereotypes().selectOne(i | i.name = "GaScenario");
+
 	// Sets Response Time
-	var resptime = self.getScenarioRespTime();		
+	var resptime = self.getScenarioRespTime();
 	self.setValue(stereotype, "respT", Sequence{resptime.asString()});
 		
 	// Sets Throughput
 	var root = self.getValue(stereotype, "root");
+	
+	root.println("root: ");
+	
 	// Calculates Throughput
 	var throughput = root.rep.asDouble() / resptime; 
 	self.setValue(stereotype, "throughput", Sequence{throughput.asString()});
 	
 	// Stores the values
-	UML.store();
-	//.println("Scenario: " + self.name + " ResponseTime: " +	resptime + " Throughput: " + throughput +  " Stored: ");
+	UML.store().println("Scenario: " + self.name + " ResponseTime: " +
+		resptime + " Throughput: " + throughput +  " Stored: ");
 }
 
 /**
@@ -89,24 +98,34 @@ operation UML!Node annotateNode()
 {	
 	var stereotype = self.getAppliedStereotypes().selectOne(i | i.name == "GaExecHost");
 	
-	var processor =LQXO!`t_processor`.all().selectOne(i | i.`a_name` = self.name);
+	var clones = UML!Node.all().select(i | i.checkStereotypeApplication("GaExecHost"));
+	clones = clones.select(i | i.getSpeedFactor() = self.getSpeedFactor() and i.getDeployed() = self.getDeployed());
+	//var processor =`t_processor`.all().selectOne(i | i.`a_name` = self.name);
+ 	var processor = LQXO!`t_processor`.all().selectOne(i | i.`a_name` = self.name);
+	
 	var utilization = Sequence{"0.0"};
 	
 	/*
 	 * If the node is actually transformed, then it retrieves and sets the utilization
 	 * otherwise, the utilization is set to zero
      */
+
 	if(processor.isDefined())
 	{
 		// Sets the utilization
 		var subtree = getChildren(processor, "result-processor");
-		utilization = subtree.select(i | i.name = "result-processor").a_utilization;		
+		utilization = subtree.select(i | i.name = "result-processor").a_utilization;
 	}
 		
-	self.setValue(stereotype, "utilization", utilization);
+	if(utilization.first.asDouble() != 0.0)
+	{
+		for(element in clones)
+		{
+			element.setValue(stereotype, "utilization", utilization);
+		}
+	}
 	
 	UML.store();
-	//.println("Processor: " + self.name + " Utilization: " + utilization.first + " Stored: ");
 }
 
 /**
@@ -114,15 +133,20 @@ operation UML!Node annotateNode()
  */
 operation UML!Message annotateActivity()
 {
-	var activity =LQXO!`t_activity`.all().selectOne(i | i.`a_name` = self.name);
+	`t_activity`.all().println();
+	self.name.println();
+	var activity =`t_activity`.all().selectOne(i | i.`a_name` = self.name);
 	var stereotype = self.getAppliedStereotypes().selectOne(i | i.name == "GaStep");	
 		
+	self.println();
+	activity.println("activity: ");
+	
 	var subtree = getChildren(activity, "result-activity");
 	var serviceTime = subtree.`a_service-time`;
 	
 	self.setValue(stereotype, "respT", serviceTime);	
 	
-	UML.store();
-	//.println("Activity: " + activity.a_name + " ServiceTime: " +		serviceTime.first + " Stored: ");
+	UML.store().println("Activity: " + activity.a_name + " ServiceTime: " +
+		serviceTime.first + " Stored: ");
 }
 	
