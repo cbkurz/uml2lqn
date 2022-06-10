@@ -72,47 +72,111 @@ rule Actor2Processor
 				i | i.represents.type = actor
 			);
 
-			// an actor is trasformed if interacts and has a sigle lifeline
-			return actor.isInteracting() and lifelines.size() = 1;
+			// an actor is transformed if interacts and has a single lifeline
+			return actor.isInteracting();// and lifelines.size() = 1;
 		}
-		var task = actor.equivalent("Actor2Task");
+	    var lifelines =
+				UML!Lifeline.all.select(i | i.represents.type = actor);
 
 		proc.name = actor.name;
-		proc.task.add(task);
+		for(lf in lifelines){
+		    var interaction = lf.getInteraction();
+		    var task = interaction.equivalent("UseCase2Task");
+		    proc.task.add(task);
+		}
+
 	}
 
-rule Actor2Task
+
+/*rule Actor2Task
 	transform actor: UML!Actor
 	to task: LQN!TaskType
 	{
 		guard {
-			var lifeline = 
-				UML!Lifeline.all.selectOne(i | i.represents.type = actor);
+			var lifelines =
+				UML!Lifeline.all.select(i | i.represents.type = actor);
 
-			return lifeline.isDefined() and lifeline.isStereotypeApplied(gaworkload);
+            if(lifelines.isEmpty())
+                return false;
+
+            return lifelines->atLeastNMatch(lf : UML!Lifeline | lf.isStereotypeApplied(gaworkload), 1 );
+
+			//return lifeline.isEmpty() and lifelines.isStereotypeApplied(gaworkload);
 		}
 
-		var lifeline = UML!Lifeline.all().selectOne(
-				i | i.represents.type = actor);
+		var lifelines = UML!Lifeline.all().select(i | i.represents.type = actor);
 
-		var beses = lifeline.collect(
-			i | i.getElements("BehaviorExecutionSpecification")
-		).flatten;
-		
-		var workload = lifeline.getWorkload();
 
-		task.name = actor.name;
-		task.entry ::= beses;
+		for(lifeline in lifelines){
 
-		if(workload[0] = "closed")
-		{
-			task.scheduling = LQN!TaskSchedulingType#ref;
-			task.multiplicity = workload[1];
-		}else
-		{
-			for(entry in task.entry)
-				entry.openArrivalRate = workload[1];
+		    var beses = lifeline.collect(
+		    	i | i.getElements("BehaviorExecutionSpecification")
+		    ).flatten;
+
+		    var workload = lifeline.getWorkload();
+
+		    task.name = actor.name;
+		    for(bs in beses){
+		        task.entry.add(bs.equivalent("BES2Entry"));
+		    }
+		    //task.entry.addAll(beses);
+		    //task.entry ::= beses;
+
+		    if(workload[0] = "closed")
+		    {
+		    	task.scheduling = LQN!TaskSchedulingType#ref;
+		    	task.multiplicity = workload[1];
+		    }else
+		    {
+		    	for(entry in task.entry)
+		    		entry.openArrivalRate = workload[1];
+		    }
 		}
+	}*/
+
+rule UseCase2Task
+	transform interaction: UML!Interaction
+	to task: LQN!TaskType
+	{
+		guard {
+
+
+            var lifelines = UML!Lifeline.all->select(lf | lf.getInteraction() == interaction);
+
+            if(lifelines.isEmpty())
+                return false;
+
+            return lifelines->atLeastNMatch(lf : UML!Lifeline | lf.isStereotypeApplied(gaworkload), 1 );
+
+			//return lifeline.isEmpty() and lifelines.isStereotypeApplied(gaworkload);
+		}
+
+        // For each interaction there must be only one lifeline stereotyped with gaworkload
+        var lifeline = UML!Lifeline.all->selectOne(lf | lf.isStereotypeApplied(gaworkload) and lf.getInteraction() == interaction);
+		//var lifelines = lifelines->selectOne(lf | lf.isStereotypeApplied(gaworkload));
+
+		//UML!Lifeline.all().select(i | i.represents.type = actor);
+
+		//for(lifeline in lifelines){
+
+		    var beses = lifeline.collect(
+		    	i | i.getElements("BehaviorExecutionSpecification")
+		    ).flatten;
+
+		    var workload = lifeline.getWorkload();
+
+		    task.name = interaction.getOwner().getName()+"_job_class";
+
+		    task.entry ::= beses;
+
+		    if(workload[0] = "closed"){
+		    	task.scheduling = LQN!TaskSchedulingType#ref;
+		    	task.multiplicity = workload[1];
+		    } else{
+		    	for(entry in task.entry)
+		    		entry.openArrivalRate = workload[1];
+		    }
+		//}
 	}
 
 rule Component2Task
@@ -189,8 +253,9 @@ rule Message2Activity
 		guard: msgo.message.getAppliedStereotypes()
 			.exists(i|i.name = "GaStep")
 
-		var message = msgo.message;	
+		var message = msgo.message;
 		var execTime = message.getValue(gastep, "execTime").first;
+		var rep = message.getValue(gastep, "rep");
 		var hostDemandMean = "1.0";
 
 		if(execTime.isDefined())
