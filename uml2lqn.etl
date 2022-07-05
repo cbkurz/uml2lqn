@@ -4,11 +4,25 @@ pre {
 	var gqam = UML!ProfileApplication.all
 		.collect(i | i.appliedProfile)
 		.selectOne(i | i.name = "GQAM");
+		
+		
+
+		
+	var hlam =  UML!ProfileApplication.all
+		.collect(i | i.appliedProfile)
+		.selectOne(i | i.name = "HLAM");
 
 	var stereotypes = gqam.getOwnedStereotypes();
 	var gaexechost = stereotypes.selectOne(i | i.name = "GaExecHost");
 	var gastep = stereotypes.selectOne(i | i.name = "GaStep");
 	var gaworkload = stereotypes.selectOne(i | i.name = "GaWorkloadEvent");
+	
+	var stereotypes_hlam = hlam.getOwnedStereotypes();
+	
+
+	
+	var rtunit = stereotypes_hlam.selectOne(i | i.name = "RtUnit");
+	
 	//var gascenario = stereotypes.selectOne(i | i.name = "GaScenario");	
 	//var deployment = UML!Package.all.selectOne(i | i.name = "deployment_view");
 }
@@ -52,7 +66,19 @@ rule Node2Processor
 			return node.isStereotypeApplied(gaexechost) 
 				and components.notEmpty();
 		}
+		
 		var speedFactor = node.getValue(gaexechost, "speedFactor");
+		(node.name +" - "+ speedFactor).println("speedFactor: ");
+		
+		var queueLength = node.getValue(rtunit, "queueSize");
+		(node.name +" - "+ queueLength).println("queueSize: ");
+		
+		var memorySize = node.getValue(rtunit, "memorySize");
+		(node.name +" - "+ memorySize).println("memorySize: ");
+		
+		var srPoolSize = node.getValue(rtunit, "srPoolSize");
+		(node.name +" - "+ srPoolSize).println("srPoolSize: ");
+		
 		/* 
 		 * Retrieves the components deployed on the current node 
 		 * and interacting in a scenario
@@ -60,6 +86,7 @@ rule Node2Processor
 		var components = node.getDeployed().select(i | i.isInteracting());
 
 		proc.name = node.name;
+		proc.speedFactor = speedFactor;
 		proc.task ::= components;
 	}
 	
@@ -152,7 +179,8 @@ rule UseCase2Task
 		}
 
         // For each interaction there must be only one lifeline stereotyped with gaworkload
-        var lifeline = UML!Lifeline.all->selectOne(lf | lf.isStereotypeApplied(gaworkload) and lf.getInteraction() == interaction);
+	    var lifeline = UML!Lifeline.all->selectOne(lf | lf.isStereotypeApplied(gaworkload) and lf.getInteraction() == interaction);
+	    
 		//var lifelines = lifelines->selectOne(lf | lf.isStereotypeApplied(gaworkload));
 
 		//UML!Lifeline.all().select(i | i.represents.type = actor);
@@ -164,17 +192,26 @@ rule UseCase2Task
 		    ).flatten;
 
 		    var workload = lifeline.getWorkload();
+		    workload.println("workload: ");
 
+			// USE CASE
 		    task.name = interaction.getOwner().getName()+"_job_class";
 
+			task.queueLength = "900000000000";
 		    task.entry ::= beses;
 
 		    if(workload[0] = "closed"){
 		    	task.scheduling = LQN!TaskSchedulingType#ref;
 		    	task.multiplicity = workload[1];
 		    } else{
-		    	for(entry in task.entry)
+//		    	var node = lifeline.getRepresents().getType().getNodes()->first();
+		    	// Maximum queue size (for open-class requests) 
+//		    	var queueLength = node.getValue(rtunit, "queueSize");
+//				(node.name +" - "+ queueLength).println("queueSize: ");
+		    	for(entry in task.entry){
 		    		entry.openArrivalRate = workload[1];
+		    		
+				}
 		    }
 		//}
 	}
@@ -209,6 +246,7 @@ rule Component2Task
 		var multiplicity = artifacts.size().asString();
 							
 		task.name = component.name;
+		task.queueLength = "90000000";
 		task.entry ::= beses;
 		task.multiplicity = multiplicity.asBigInteger();
 	}
@@ -254,12 +292,12 @@ rule Message2Activity
 			.exists(i|i.name = "GaStep")
 
 		var message = msgo.message;
-		var execTime = message.getValue(gastep, "execTime").first;
+		//var execTime = message.getValue(gastep, "execTime").first;
 		var rep = message.getValue(gastep, "rep");
-		var hostDemandMean = "1.0";
+		var hostDemandMean = message.getValue(gastep, "hostDemand").first;
 
-		if(execTime.isDefined())
-			hostDemandMean = execTime.asDouble() * rep.asDouble();
+		if(not hostDemandMean.isDefined())
+			hostDemandMean =  "1.0";
 
 		var call = msgo.equivalent("Message2Request");
 		if(call.isDefined())

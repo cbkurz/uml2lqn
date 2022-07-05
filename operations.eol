@@ -27,6 +27,18 @@ operation UML!NamedElement getArtifacts(): Collection
 		
 	return output;	
 }
+
+/** 
+ * Checks if a Stereotype is applied to a UML!NamedElement 
+ * @param name the name of the Stereotype
+ * @return a boolean stating if a Stereotype is applied or not
+ */
+operation UML!NamedElement checkStereotypeApplication(name: String): Boolean
+{	
+	return self.getAppliedStereotypes().exists(i|i.name = name);
+}
+
+
 /**
  * Checks if it exists a behavioral description involving self
  * @param element: element under investigation
@@ -150,4 +162,40 @@ operation UML!BehaviorExecutionSpecification getMessages(): Collection
 operation UML!Artifact getDeployments() : Sequence
 {
 	return UML!Deployment.all().select(i | i.supplier.first = self).flatten;
+}
+
+operation UML!Component getNodes() : List(UML!Node){
+	info("Component getNodes() : List(Node)");
+	var returnValue : List(UML!Node) = new List(UML!Node);
+	for (artifact in self.getAllArtifacts()){
+		for(node in UML!Node.allInstances){
+			if( node.hasDeployment(artifact)) {
+				returnValue.add(node);
+			}
+		}
+	}
+	return returnValue;
+}
+
+
+/**
+ * Gets the speedFactor of a Node
+ */
+operation UML!Node getSpeedFactor()
+{
+	var stereotype = self.checkAndGetStereotype("GaExecHost");
+
+	return self.getValue(stereotype, "speedFactor");
+}
+
+/** 
+ * Gets the object representing the Stereotype if it is applied to NamedElement
+ * @param name the name of the Stereotype
+ * @return the object representing the Stereotype
+ */
+operation UML!NamedElement checkAndGetStereotype(name: String): UML!Stereotype
+{
+	if(self.checkStereotypeApplication(name))
+		return self.getAppliedStereotypes().selectOne(i|i.name = name);
+	return null;
 }
