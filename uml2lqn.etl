@@ -1,12 +1,10 @@
 import "operations.eol";
 
 pre {
+	
 	var gqam = UML!ProfileApplication.all
 		.collect(i | i.appliedProfile)
 		.selectOne(i | i.name = "GQAM");
-		
-		
-
 		
 	var hlam =  UML!ProfileApplication.all
 		.collect(i | i.appliedProfile)
@@ -18,9 +16,7 @@ pre {
 	var gaworkload = stereotypes.selectOne(i | i.name = "GaWorkloadEvent");
 	
 	var stereotypes_hlam = hlam.getOwnedStereotypes();
-	
-
-	
+		
 	var rtunit = stereotypes_hlam.selectOne(i | i.name = "RtUnit");
 	
 	//var gascenario = stereotypes.selectOne(i | i.name = "GaScenario");	
@@ -68,16 +64,16 @@ rule Node2Processor
 		}
 		
 		var speedFactor = node.getValue(gaexechost, "speedFactor");
-		(node.name +" - "+ speedFactor).println("speedFactor: ");
+//		(node.name +" - "+ speedFactor).println("speedFactor: ");
 		
 		var queueLength = node.getValue(rtunit, "queueSize");
-		(node.name +" - "+ queueLength).println("queueSize: ");
+//		(node.name +" - "+ queueLength).println("queueSize: ");
 		
 		var memorySize = node.getValue(rtunit, "memorySize");
-		(node.name +" - "+ memorySize).println("memorySize: ");
+//		(node.name +" - "+ memorySize).println("memorySize: ");
 		
 		var srPoolSize = node.getValue(rtunit, "srPoolSize");
-		(node.name +" - "+ srPoolSize).println("srPoolSize: ");
+//		(node.name +" - "+ srPoolSize).println("srPoolSize: ");
 		
 		/* 
 		 * Retrieves the components deployed on the current node 
@@ -192,7 +188,7 @@ rule UseCase2Task
 		    ).flatten;
 
 		    var workload = lifeline.getWorkload();
-		    workload.println("workload: ");
+//		    workload.println("workload: ");
 
 			// USE CASE
 		    task.name = interaction.getOwner().getName()+"_job_class";

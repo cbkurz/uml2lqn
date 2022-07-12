@@ -1,4 +1,4 @@
-"Changing LqnModelType tag to lqn-model...".println();
+//"Changing LqnModelType tag to lqn-model...".println();
 
 var currentRoot = PlainLQN.root;
 
@@ -14,4 +14,4 @@ for(child in subtree){
 PlainLQN.root = newTag;
 
 
-"Done!".println();
+//"Done!".println();
