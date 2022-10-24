@@ -9,15 +9,19 @@ pre {
 	var hlam =  UML!ProfileApplication.all
 		.collect(i | i.appliedProfile)
 		.selectOne(i | i.name = "HLAM");
+	
+	if(hlam.isUndefined())
+		throw "Error: HLAM not found";
+		
+	var stereotypes_hlam = hlam.getOwnedStereotypes();	
+	var rtunit = stereotypes_hlam.selectOne(i | i.name = "RtUnit");
 
 	var stereotypes = gqam.getOwnedStereotypes();
 	var gaexechost = stereotypes.selectOne(i | i.name = "GaExecHost");
 	var gastep = stereotypes.selectOne(i | i.name = "GaStep");
 	var gaworkload = stereotypes.selectOne(i | i.name = "GaWorkloadEvent");
 	
-	var stereotypes_hlam = hlam.getOwnedStereotypes();
-		
-	var rtunit = stereotypes_hlam.selectOne(i | i.name = "RtUnit");
+	
 	
 	//var gascenario = stereotypes.selectOne(i | i.name = "GaScenario");	
 	//var deployment = UML!Package.all.selectOne(i | i.name = "deployment_view");
@@ -30,9 +34,11 @@ rule Model2Schema
 	to lqn: LQN!LqnModelType
 	{
 		guard: uml.name <> "PrimitiveTypes"
+		
 		// Retrieves the nodes and the actor to convert to processors
-		var nodes = UML!Node.all.equivalent();
 		var actors = UML!Actor.all.equivalent("Actor2Processor");
+		var nodes = UML!Node.all.equivalent();
+		
 
 		lqn.name = uml.name;
 		lqn.processor.addAll(nodes);
@@ -82,6 +88,7 @@ rule Node2Processor
 		var components = node.getDeployed().select(i | i.isInteracting());
 
 		proc.name = node.name;
+		
 		proc.speedFactor = speedFactor;
 		proc.task ::= components;
 	}
@@ -98,64 +105,26 @@ rule Actor2Processor
 			// an actor is transformed if interacts and has a single lifeline
 			return actor.isInteracting();// and lifelines.size() = 1;
 		}
+		
 	    var lifelines =
 				UML!Lifeline.all.select(i | i.represents.type = actor);
 
 		proc.name = actor.name;
+		
+		
 		for(lf in lifelines){
+			//lf.name.println("lf -> ");
 		    var interaction = lf.getInteraction();
+		    //interaction.name.println("interaction -> ");
 		    var task = interaction.equivalent("UseCase2Task");
+		    //task.name.println("task -> ");
 		    proc.task.add(task);
 		}
-
+		
+		/*for(tsk in proc.task){
+			tsk.name.println("tasks ->");
+		}*/
 	}
-
-
-/*rule Actor2Task
-	transform actor: UML!Actor
-	to task: LQN!TaskType
-	{
-		guard {
-			var lifelines =
-				UML!Lifeline.all.select(i | i.represents.type = actor);
-
-            if(lifelines.isEmpty())
-                return false;
-
-            return lifelines->atLeastNMatch(lf : UML!Lifeline | lf.isStereotypeApplied(gaworkload), 1 );
-
-			//return lifeline.isEmpty() and lifelines.isStereotypeApplied(gaworkload);
-		}
-
-		var lifelines = UML!Lifeline.all().select(i | i.represents.type = actor);
-
-
-		for(lifeline in lifelines){
-
-		    var beses = lifeline.collect(
-		    	i | i.getElements("BehaviorExecutionSpecification")
-		    ).flatten;
-
-		    var workload = lifeline.getWorkload();
-
-		    task.name = actor.name;
-		    for(bs in beses){
-		        task.entry.add(bs.equivalent("BES2Entry"));
-		    }
-		    //task.entry.addAll(beses);
-		    //task.entry ::= beses;
-
-		    if(workload[0] = "closed")
-		    {
-		    	task.scheduling = LQN!TaskSchedulingType#ref;
-		    	task.multiplicity = workload[1];
-		    }else
-		    {
-		    	for(entry in task.entry)
-		    		entry.openArrivalRate = workload[1];
-		    }
-		}
-	}*/
 
 rule UseCase2Task
 	transform interaction: UML!Interaction
@@ -173,7 +142,7 @@ rule UseCase2Task
 
 			//return lifeline.isEmpty() and lifelines.isStereotypeApplied(gaworkload);
 		}
-
+		
         // For each interaction there must be only one lifeline stereotyped with gaworkload
 	    var lifeline = UML!Lifeline.all->selectOne(lf | lf.isStereotypeApplied(gaworkload) and lf.getInteraction() == interaction);
 	    
@@ -186,7 +155,7 @@ rule UseCase2Task
 		    var beses = lifeline.collect(
 		    	i | i.getElements("BehaviorExecutionSpecification")
 		    ).flatten;
-
+		    
 		    var workload = lifeline.getWorkload();
 //		    workload.println("workload: ");
 
@@ -195,7 +164,7 @@ rule UseCase2Task
 
 			task.queueLength = "900000000000";
 		    task.entry ::= beses;
-
+		    
 		    if(workload[0] = "closed"){
 		    	task.scheduling = LQN!TaskSchedulingType#ref;
 		    	task.multiplicity = workload[1];
@@ -206,7 +175,6 @@ rule UseCase2Task
 //				(node.name +" - "+ queueLength).println("queueSize: ");
 		    	for(entry in task.entry){
 		    		entry.openArrivalRate = workload[1];
-		    		
 				}
 		    }
 		//}
@@ -263,15 +231,18 @@ rule BES2Entry
 			// A BES should belong to a single and existing Lifeline
 			return bes.covered.first.isDefined();
 		}
+		
 		var messages = bes.getMessages();
 		// Gets only the messages that are sent
 		messages = messages.select(
 			i | i.isSend() and i.message.messageSort <> UML!MessageSort#reply
-		);	
+		);
+		
 		// If msgs is empty, then the BES does not send requests
-		if(messages.isEmpty())
+		if(messages.isEmpty()){
 			messages.add(bes.start);
-	
+		}
+			
 		entry.name = bes.name;					
 		entry.entryPhaseActivities = new LQN!PhaseActivities;
 		entry.entryPhaseActivities.activity =
@@ -288,6 +259,7 @@ rule Message2Activity
 			.exists(i|i.name = "GaStep")
 
 		var message = msgo.message;
+		
 		//var execTime = message.getValue(gastep, "execTime").first;
 		var rep = message.getValue(gastep, "rep");
 		var hostDemandMean = message.getValue(gastep, "hostDemand").first;
@@ -312,9 +284,11 @@ rule Message2Request
 		guard: msgo.isSend()
 		
 		var message = msgo.message;
+		
 		var rep = message.getValue(gastep, "rep");
 
 		var lifeline = message.receiveEvent.covered;
+		
 		// Gets the BES starting with the message
 		var bes = lifeline.first.getElements("BehaviorExecutionSpecification");
 		// Gets the target BES

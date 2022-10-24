@@ -86,14 +86,25 @@ operation UML!UseCase annotateScenario()
 	self.setValue(stereotype, "respT", Sequence{resptime.asString()});
 		
 	// Sets Throughput
-	var root = self.getValue(stereotype, "root");
+//	var root = self.getValue(stereotype, "root");
 	
 //	root.println("root: ");
 	
 	// Calculates Throughput
-	var throughput = root.rep.asDouble() / resptime; 
-	self.setValue(stereotype, "throughput", Sequence{throughput.asString()});
+//	var throughput = root.rep.asDouble() / resptime; 
 	
+	// When the UC is mapped to a task the suffix has been appended to the name.
+ 	var suffix = "_job_class";
+ 	var ucName = self.name + suffix;
+ 	
+ 	var referenceTasks = LQXO!`t_task`.all().select(t | t.`a_name` == ucName);
+ 	
+ 	var resultTask = referenceTasks.getChildren("result-task").first();
+ 	
+ 	var throughput = resultTask.`a_throughput`;
+
+	self.setValue(stereotype, "throughput", Sequence{throughput});
+		
 	// Stores the values
 	UML.store();//.println("Scenario: " + self.name + " ResponseTime: " +
 //		resptime + " Throughput: " + throughput +  " Stored: ");
