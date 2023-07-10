@@ -31,15 +31,18 @@ the required plugins and how to run the project in Eclipse.
   * Klick on `Run`
   * If everything works correctly the Build will execute successfully.
 <img src="AntConfigurationDialog.png" alt="AntConfigurationDialog" height="300"/>
-
+* If you want to use the workflow you can provide your own UML diagrams to solve them by calling the launch.xml from another ANT script which provides the parameters `input`, `name` and `output`.
 
 ## Branches
 This section will give a short overview of the branches that are present in this repository and their purpose.
 
 ### Master
+TODO
 
 
 ### Support-Workflow
-
+In this branch the workflow to execute the UML to LQN lives.
+The workflow is present in the launch.xml and the LQN Ecore definition is also present here.
 
 ### Easier
+TODO
