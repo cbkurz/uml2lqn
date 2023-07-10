@@ -5,4 +5,4 @@ With the languages provided and the integration into the Eclipse IDE, Epsilon st
 To get an understanding of the Epsilon framework, see the following resources:
 * https://eclipse.dev/epsilon/ - the main page of Epsilon
 * https://eclipse.dev/epsilon/playground/ - provides an in-browser-environment to create models
-* https://www.youtube.com/playlist?list=PLRwHao6Ue0YUecg7vEUQTrtySIWwrd_mI - is a lecture on how to use Epsilon in a course of Dimitris Kolovos.
+* https://www.youtube.com/playlist?list=PLRwHao6Ue0YUecg7vEUQTrtySIWwrd_mI - is a lecture on how to use Epsilon in a course by Dimitris Kolovos.
