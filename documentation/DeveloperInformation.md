@@ -5,6 +5,7 @@ This includes on how to set up a working environment and what branches exist.
 It is strongly advised to watch the seminar of Dimitris Kolovos, that is referenced in [Epsilon](Epsilon.md).
 
 ## Setup Environment
+
 Epsilon is integrated in Eclipse therefore this tutorial describes how to set up the resprective eclipse environment, 
 the required plugins and how to run the project in Eclipse.
 
@@ -12,6 +13,7 @@ the required plugins and how to run the project in Eclipse.
 * Checkout the branch `support-workflow`
 * Install the LQN-Solver by installing the project https://github.com/layeredqueuing/V5
 * Download and install Eclipse Epsilon as describes here: https://eclipse.dev/epsilon/download/  
+  * Please make sure to select Java 11
 
 <img src="InstallEpsilon.png" alt="InstallEpsilon" width="250"/>  
 
