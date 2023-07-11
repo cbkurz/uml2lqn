@@ -11,7 +11,8 @@ Therefore, this tutorial describes how to set up the respective Eclipse environm
 * Clone the project from github.
 * Checkout the branch `support-workflow`
 * Install the LQN-Solver by installing the project https://github.com/layeredqueuing/V5
-* Download and install Eclipse Epsilon as described here: https://eclipse.dev/epsilon/download/  
+* Download and install Eclipse Epsilon as described here: https://eclipse.dev/epsilon/download/
+  * Please make sure to use Java 11 when installing
 
 <img src="InstallEpsilon.png" alt="InstallEpsilon" width="250"/>  
 
